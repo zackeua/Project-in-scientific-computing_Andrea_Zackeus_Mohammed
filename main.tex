@@ -1,0 +1,127 @@
+\documentclass[a4paper,10pt,twoside]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[swedish]{babel}
+\usepackage{it_kompendium}
+\usepackage{comment}
+%
+%
+%
+\begin{document}
+\titel{Project - Time-step analysis of methods for the advection equation}
+\undertitel{Subtitle (if needed)}
+% \framsidebild{\includegraphics[width =
+% \textwidth]{dinbild}\\\vspace{1cm}}
+\marginaltext{PROJECT REPORT}
+\forfattare{Author(s)}
+\rapportnummer{Project in Computational Science: Report} 
+\datum{December 2020}
+\it_kompendium
+
+%
+% Det övriga dokumentet
+%
+
+\section{Introduction}
+% computational partial diff eq using Matlab
+Many problems can be modeled by partial differential equations (PDEs) from various science and engineering applications. Not all PDEs can be solved analytically, that is why numerical methods are needed to give good approximations. PDEs can be elliptic, parabolic such as the heat diffusion equation and hyperbolic, they can be homogeneous and inhomogeneous. An important property of the PDEs is that the equation has to be well posed, and in order to make the equation wellposed, we must supply an initial condition and proper boundary conditions.
+
+There are many different numerical methods for solving PDEs. In general, the numerical methods can be classified into six categories [1]:   
+\begin{itemize}
+    \item Finite difference
+    \item Spectral method
+    \item Finite element
+    \item Finite volume
+    \item Boundary element
+    \item Meshfree method
+\end{itemize}
+
+\section{Theory}
+
+The basic idea of finite difference is to use finite differences to approximate those dfferential in the PDEs. It is an easy technique to solve a partial differential equation, but it has some disadvantages. One of the disadvantages is that it becomes quite complex when we solve PDEs on irregular domains. Another one is that it is not easy to carry out the mathematical analysis like stability and convergence especially for nonlinear PDEs or PDEs with variable coefficients.
+%%
+
+Spectral methods are powerful technologies for solving PDEs when the solution is smooth and the domain is simple. %% need to write more about spectral methods, kolla källa 14 s 11 i källa 1.
+
+The finite element method is a very popular method for solving
+various PDEs. It has well-established mathematical
+theory for various PDEs. It is also very useful in solving PDEs over
+complex domains such as cars and airplanes. The finite element method works
+by rewriting the governing PDE into an equivalent variational problem. Then the next step is meshing
+the modeled domain into smaller elements and looking for approximate
+solutions at the mesh nodes when using a linear basis function over each element.
+%%
+
+The boundary element method is used to solve PDEs which can be
+written as integral equations. It attempts
+to use the given boundary conditions to fit boundary values into the integral
+equation, rather than values throughout the space defined by the PDE. The boundary element method
+is often more efficient than other methods in terms of computational resources
+for problems when the surface-to-volume ratio is small, but it typically yields fully populated matrices, which makes
+the storage requirements and computational time increase in the square order
+of the problem size, while matrices from finite element methods are
+often sparse and banded. Therefore, for many problems boundary element methods
+are significantly less efficient than those volume-based methods such as finite
+element methods. Another disadvantage for the boundary element method
+is that nonlinear problems can not be written as integral equations, which restricts the applicability of the boundary element
+method.
+
+%%%
+
+
+
+
+%refrens 3 in the instruktion
+Gaussian quadrature is a powerful technique for numerical integration and it is one of the spectral methods.
+%% Spectral methods need to be defined here
+Quadrature refers to the use of an algorithm for the numerical calculation of
+the value of a definite integral in one or more dimensions.
+There are two families of quadrature rules:
+\begin{itemize}
+    \item Newton-Cotes formulas: They are based on using a low-order polynomial approximation of the
+integrand on subintervals of decreasing size. The nodes are equispaced.
+The (N + 1)-point Newton-Cotes formula has the property that it
+exactly integrates polynomials of degree $\leq$ ≤ N (N odd) or $\leq$ ≤ N + 1 (N even). Some examples are the trapezoidal rule (N = 1), which means that it is exact for linear polynomials, and Simpson’s rule (N = 2), which means that it is exact for third order polynomials. The trapezoidal rule is a 2nd-order accurate rule, while Simpson’s is 4th-order accurate. 
+Unfortunately Newton-Cotes formulas do not converge for many functions.  
+    \item Gaussian Quadratures:They make use of polynomial approximations
+of the integrand of increasing degree. The nodes are roots of certain polynomials and are not
+equispaced but rather tend to cluster near the interval end-points. The nodes are chosen optimally
+so as to maximize the degree of polynomials that the quadrature integrates exactly. The degree is N + 1 greater
+than the Newton-Cotes formulas. An example is Legendre Gaussian
+quadrature, for which the nodes are roots of Legendre
+polynomials. Compared to Newton-Cotes formulas, Gaussian quadratures converge for any continuous f and are not adversely
+affected by round-off errors. It means that it is not recommended to use Newton-Cotes formulas when we have a large number of points, because in that case the round off error will be accumulated and may be dominate the calculations.  
+\end{itemize}
+\section{Questions!!!}
+10 v\\
+- What is the plan for the project? Deadlines, presentations, etc\\
+- What is the training presentation?\\
+- Are we supposed to use FEniCS/Matlab for the implementation?\\
+- Do you have any suggested readings for our literature study?\\
+- Could we have some sort of weekly meeting, where we can discuss our progress?\\
+
+\begin{comment}
+J. D. D. Basabe and M. K. Sen, “Stability of the high-order finite elements for acoustic or elastic wave
+propagation with high-order time stepping,” Geophysical Journal International, vol. 181, no. 1, pp. 577–590,
+2010.
+
+\end{comment}
+
+\section{References}
+\begin{itemize}
+    \item 
+    1. Jichun Li and Yi-Tung Chen. \textit{Computational Partial
+Differential Equations
+Using MATLAB }. USA. Chapman and Hall/CRC. 2009. 
+\end{itemize}
+
+%%%
+
+%J. D. D. Basabe and M. K. Sen, “Stability of the high-order finite elements for acoustic or elastic wave
+%propagation with high-order time stepping,” Geophysical Journal International, vol. 181, no. 1, pp. 577–590,
+%2010.
+
+
+%%%
+
+\end{document}
+
