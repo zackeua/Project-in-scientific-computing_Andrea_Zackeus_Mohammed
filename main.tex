@@ -3,6 +3,7 @@
 \usepackage[swedish]{babel}
 \usepackage{it_kompendium}
 \usepackage{comment}
+\usepackage{amsmath} 
 %
 %
 %
@@ -12,7 +13,7 @@
 % \framsidebild{\includegraphics[width =
 % \textwidth]{dinbild}\\\vspace{1cm}}
 \marginaltext{PROJECT REPORT}
-\forfattare{Author(s)}
+\forfattare{Andrea Lindgren, Mohammed Mosa, Zackeus Zetterberg}
 \rapportnummer{Project in Computational Science: Report} 
 \datum{December 2020}
 \it_kompendium
@@ -21,9 +22,12 @@
 % Det övriga dokumentet
 %
 
+\newcommand{\abs}[1]{\left\lvert\ #1 \ \right\rvert}
+
+
 \section{Introduction}
-% computational partial diff eq using Matlab
-Many problems can be modeled by partial differential equations (PDEs) from various science and engineering applications. Not all PDEs can be solved analytically, that is why numerical methods are needed to give good approximations. PDEs can be elliptic, parabolic such as the heat diffusion equation and hyperbolic, they can be homogeneous and inhomogeneous. An important property of the PDEs is that the equation has to be well posed, and in order to make the equation wellposed, we must supply an initial condition and proper boundary conditions.
+
+Numerical methods are important when we examine the world around us. Many of the problems and occurrences happening can be modeled by using partial difference equations, PDE, which is a commonly used way to describe the real events to some extent. Not all of these PDEs can be solved analytically and therefore numerical methods are needed go give a good approximation of the problem. PDEs can be elliptic, parabolic (e.g. the heat diffusion equation) and hyperbolic. They can be homogeneous and inhomogeneous. An important property of the PDEs is that the equation has to be well posed, and in order to make the equation wellposed, we must supply an initial condition and proper boundary conditions.
 
 There are many different numerical methods for solving PDEs. In general, the numerical methods can be classified into six categories [1]:   
 \begin{itemize}
@@ -34,21 +38,74 @@ There are many different numerical methods for solving PDEs. In general, the num
     \item Boundary element
     \item Meshfree method
 \end{itemize}
+%% form first meetings slides
+For initial value problems solved with time-stepping
+methods, all time-steps are performed sequentially. Therefore in order to solve a system up to a specified time
+a larger step-size will reduce the required number of
+computations. Depending on the system and the time-stepping scheme,
+there may be a maximum time-step that can be chosen while still producing stable results. Obtaining accurate knowledge of this limit allows for better performance,
+which can be a significant consideration when solving large PDE systems.
+%%%%
+
+In this project we will analyse the time-step of different methods applied to the advection equation. In order to do this the project will be split into two different sections, a short introduction and the main investigative part. The first one including a Von Neumann stability analysis with an implementation using RK4 time-stepping as well as a literature study about higher order finite difference methods, higher order Lagrange finite elements and also some stabilization techniques  such  as  artificial viscosity methods, stability analysis and different methods of eigenvalue computations. 
+The second part contains the main section of the project, where the following questions will be investigated and discussed using computational experiments and mathematical analysis.
+
+
+\begin{enumerate}
+    \item Does the maximum stable time-step depend on how the polynomial interpolation points are chosen, for higher order Lagrange finite elements?
+    \item How does the maximum stable time-step behave as the order of the methods increase?
+    \item In cases where a stabilization technique is not necessary to obtain a stable solution,  what is the effect on the maximum time-step of applying the stabilization?
+\end{enumerate}
+
+The aim of this project is to give complete, correct and informative answers to the questions above with the focus on time step analysis.
+
+In this project the following advection equation is considered on a periodic 1D spatial domain \ref{eq:advection}.
+\begin{equation}
+  \left\{
+  \begin{array}{@{}ll@{}}
+    \frac{\partial u }{\partial t} + \frac{\partial u}{\partial x}= 0, & x \in [0,1], t>0,\\
+    u(x+1, t) = u(x, t), & x \in [0,1), t \geq 0,\\
+    u(x,0) = u_0(x), & x \in [0,1)
+  \end{array}\right.
+  \label{eq:advection}
+\end{equation} 
+
+%% from first meeetings slides
+The periodic boundaries of this form define a
+ring-shaped domain without boundaries, and are useful
+for testing the stability of the discretization without
+effects from boundary conditions.
+
+The main family of finite difference methods considered for this project are central difference methods. These
+are formed by using Taylor expansions of $ u(x\pm jh ), j= 1,2,... $; to approximate the derivatives in the differential equation,for example:
+\begin{equation}
+\left\{
+  \begin{array}{@{}ll@{}}
+    j=1:\frac { u(x+h)-u(x-h) }{ 2h } ={ u }^{ ' }(x)+O({ h }^{ 2 }) ,\\
+    j=2:\frac { -u(x+2h)+8u(x+h)-8u(x-h)+u(x-2h) }{ 12h } =\quad { u }^{ ' }(x)+O({ h }^{ 4 }).
+  \end{array}\right.
+  \label{eq:FDM}
+\end{equation}
+
+
+For these methods increasing the order of accuracy
+reduces the sparsity of the matrix.
+%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Theory}
 
-The basic idea of finite difference is to use finite differences to approximate those dfferential in the PDEs. It is an easy technique to solve a partial differential equation, but it has some disadvantages. One of the disadvantages is that it becomes quite complex when we solve PDEs on irregular domains. Another one is that it is not easy to carry out the mathematical analysis like stability and convergence especially for nonlinear PDEs or PDEs with variable coefficients.
+%%%%
+The basic idea of finite difference is to use finite differences to approximate those dfferential in the PDEs. It is an easy technique to solve a partial differential equation, but it has some disadvantages. One of the disadvantages is that it becomes quite complex when we solve PDEs on irregular domains. Another one is that it is not easy to carry out the mathematical analysis like stability and convergence especially for nonlinear PDEs or PDEs with variable coefficients [1].
 %%
 
-Spectral methods are powerful technologies for solving PDEs when the solution is smooth and the domain is simple. %% need to write more about spectral methods, kolla källa 14 s 11 i källa 1.
+Spectral methods are powerful technologies for solving PDEs when the solution is smooth and the domain is simple [1]. %% need to write more about spectral methods, kolla källa 14 s 11 i källa 1.
 
 The finite element method is a very popular method for solving
 various PDEs. It has well-established mathematical
 theory for various PDEs. It is also very useful in solving PDEs over
 complex domains such as cars and airplanes. The finite element method works
-by rewriting the governing PDE into an equivalent variational problem. Then the next step is meshing
-the modeled domain into smaller elements and looking for approximate
-solutions at the mesh nodes when using a linear basis function over each element.
+by rewriting the governing PDE into an equivalent variational problem. Then the next step is meshing the modeled domain into smaller elements and looking for approximate
+solutions at the mesh nodes when using a linear basis function over each element [1].
 %%
 
 The boundary element method is used to solve PDEs which can be
@@ -63,9 +120,32 @@ often sparse and banded. Therefore, for many problems boundary element methods
 are significantly less efficient than those volume-based methods such as finite
 element methods. Another disadvantage for the boundary element method
 is that nonlinear problems can not be written as integral equations, which restricts the applicability of the boundary element
-method.
+method [1].
 
 %%%
+The finite volume method
+is very popular in computational fluid dynamics. The basic idea of the finite
+volume method is to integrate the differential equation over a finite-sized control
+volume surrounding each nodal point on a mesh, then changing the volume
+integrals (those involving the divergence term) to surface integrals which can
+be evaluated as fluxes at the surfaces of each finite volume. Hence the finite
+volume method is conservative locally on each volume. Another advantage of
+the finite volume method is that it can be easily used for irregularly shaped
+domains [1].
+%%%%%
+
+The meshfree method is a more recently developed technique
+for solving PDEs. The mesh-based methods (the finite element, boundary
+element and finite volume methods) share the drawbacks such as the tedious
+meshing and re-meshing in crack propagation problem, the melting of a solid
+or the freezing process, large deformations, etc. The meshless method aims
+to overcome those drawbacks by getting rid of meshing or re-meshing the
+entire modeled domain and only adding or deleting nodes, instead [1].
+
+The solutions of hyperbolic equations are waves. Some properties associated with waves, are the amplitude and the
+phase of the waves. The dissipation (or amplitude) error, and the dispersion (or
+phase) error are the corresponding errors introduced by the numerical
+schemes that we use [1].% komplettra detta från sektion 3.3 s 42
 
 
 
@@ -80,9 +160,9 @@ There are two families of quadrature rules:
     \item Newton-Cotes formulas: They are based on using a low-order polynomial approximation of the
 integrand on subintervals of decreasing size. The nodes are equispaced.
 The (N + 1)-point Newton-Cotes formula has the property that it
-exactly integrates polynomials of degree $\leq$ ≤ N (N odd) or $\leq$ ≤ N + 1 (N even). Some examples are the trapezoidal rule (N = 1), which means that it is exact for linear polynomials, and Simpson’s rule (N = 2), which means that it is exact for third order polynomials. The trapezoidal rule is a 2nd-order accurate rule, while Simpson’s is 4th-order accurate. 
+exactly integrates polynomials of degree $\leq$ N (N odd) or $\leq$ N + 1 (N even). Some examples are the trapezoidal rule (N = 1), which means that it is exact for linear polynomials, and Simpson’s rule (N = 2), which means that it is exact for third order polynomials. The trapezoidal rule is a 2nd-order accurate rule, while Simpson’s is 4th-order accurate. 
 Unfortunately Newton-Cotes formulas do not converge for many functions.  
-    \item Gaussian Quadratures:They make use of polynomial approximations
+    \item Gaussian Quadratures: They make use of polynomial approximations
 of the integrand of increasing degree. The nodes are roots of certain polynomials and are not
 equispaced but rather tend to cluster near the interval end-points. The nodes are chosen optimally
 so as to maximize the degree of polynomials that the quadrature integrates exactly. The degree is N + 1 greater
@@ -91,6 +171,271 @@ quadrature, for which the nodes are roots of Legendre
 polynomials. Compared to Newton-Cotes formulas, Gaussian quadratures converge for any continuous f and are not adversely
 affected by round-off errors. It means that it is not recommended to use Newton-Cotes formulas when we have a large number of points, because in that case the round off error will be accumulated and may be dominate the calculations.  
 \end{itemize}
+
+%% from bervet 1,2 book (() not that important))) Mohammed
+Euler forward method is a one step method because the value of the increment function (the slop)is based on information at asingle point i. Multistep methods are methods which use information from several previous points as a basis for extrapolating to a new value.
+
+The error can be reduced using a smaller step size. Error analysis of the numerical solution can be considered by: Truncation error (discretization error) which occurs because we approximate the true solution using a finite number of terms from the Taylor series. We thus truncate, or leave out, a part of the true solution. It is caused by the nature of the method empmloyed to approximate the solution. 
+
+The truncation error is divided to two types, the local one which results from an application of the method in question over single step, and the propagated one which results from the approximations produced during the previous steps. The sum of the local truncation error and the propagated truncation error is the global error, which can be reduced by decreasing the time/grid step. On the other hand, round off errors caused by the limited numbers of significant digits that can be retained by a computer.
+
+
+%%%%%%%%%%%%%%%%%%%%%
+%%%Stämmer det med O(h^h) grejerna? eller ska det vara h^n?
+%%%%%%%%%%%%%%%%%%%%
+
+An nth order method will yield perfect results (exact slution) if the underlying solution is an nth-order polynomial. And the local truncation error will be $O(h^h+1)$, and the global $O(h^h)$. In general, if the absolut value of the amplification factor is bigger than one, then the numerical solution is unstable. Euler method is first order and conditionally stable.
+
+
+A numerical solution is unstable if errors grow exponentially for a problem for which there is a bounded solution. The stability of a particular application can depend on three factors: the numerical method, the step size and the differential equation. There are certain ODEs where errors always grow regardless of the method (ill conditioned ODEs). 
+%%%
+
+%%FEM booken k10
+Standard finite element methods have in a more general convection reaction diffusion equation great difficulties in handling boundary layers,( a quick change which takes place over a small distance of length around the boundary). Layers may trigger oscillations throughout the whole computational domain
+that renders the finite element approximation useless. That is whey we need to modify the standard Galerkin finite element method (GFEM) to more stabilized method. There are different ways of stabilization techniques:
+\begin{itemize}
+    \item Isotropic stabilization (artificial diffusion): Adding more diffusion because the oscillations were due the small diffusion parameter $\epsilon$. The idea is to add diffusion as little as possible not to
+sacrifice accuracy, but as much as needed to obtain stability. One way is to limit the smallest value of $\epsilon$ to the mesh size h, then finer mesh will lead automatically to a decrease of the stabilization. But due to the perturbation of the equation, this method is a first order accurate in h.
+    \item Least squares stabilization, which is a more accurate way than the artificial diffusion way. The idea of this technique is to use least squares minimization to obtain the normal equations of the Least squares method. The Galerkin Least Squares (GLS) method is obtained by combining the standard
+Galerkin and the Least Squares method, which means that we replace the test function v by $ v+ \delta Lv$, where $ \delta $ is a parameter to be chosen suitably (i.e., for maximal
+accuracy), and L is the differential operator. By doing so we hope to combine the accuracy of the Galerkin method with the stability of the
+Least Squares method.
+\end{itemize}
+
+%%% eigenvalues and eigenvectors from bervet 2s book, eller bervet 3: F2, F3
+\subsection{Eigenvalues and eigenvectors}
+There is no direct methods to compute the eigenvalues, that is why iterative methods such as the power method, or the inverse power method are needed. The power method when applied to a matrix A, gives the biggest eigenvalue, while when applied to the inverse of A, gives the smallest eigenvalue. The inverse power method can be used also to compute the smallest eigenvalues. A nother option is to use the polynomial method to compute the spectrum of A(the set of the eigenvalues). This method can be implemented in Matlab by the functions: poly() and roots(). In Matlab one can use eig fuction to compute the eigenvalues and the eigenvectors.
+
+
+%%%
+
+%%%
+\subsubsection{Finite element analysis}
+%%%%%%%
+\begin{equation}
+  \left\{
+  \begin{array}{@{}ll@{}}
+    \frac{\partial u }{\partial t} + \frac{\partial u}{\partial x}= 0, & x \in [0,1], t>0,\\
+    u(x+1, t) = u(x, t), & x \in [0,1), t \geq 0,\\
+    u(x,0) = u_0(x), & x \in [0,1)
+  \end{array}\right.
+  \label{eq_3}
+\end{equation}
+%%%%%%%%%%%%%%
+Let us define the vector space V:
+%%%%%%%
+\begin{equation}
+  V = \left\{  v:\left\| v(\cdot,t) \right\|  + \left\| {  v}^{  '}(\cdot,t) \right\| < \infty, v(x+1, t) = v(x, t) \right\},
+  \label{eq_4}
+\end{equation}
+%%%%%%%%%%%%%%
+where $ \left\| \cdot \right\| ={ \left\| \cdot  \right\|  }_{ L^2(I) } $ denotes the usual $L^2$ norm, and the norm $  \left\| v\right\| =  \left\| v( \cdot,t )\right\|$ is a function of t not a function of x. Introducing the interval $I= [0,1] $and $ J= (0,t] $, and multiplying the PDE in \ref{eq_3} by a test function v= v(x,t) and integrating, we get the following variational formulation: 
+find $u(x,t)$ such that for every fixed $t \in J, u \in V$ and
+%%%
+\begin{equation}
+    \int_0^1 \frac{\partial u}{\partial t}v dx+ \int_0^1 \frac{\partial u}{\partial x}v dx= 0 \quad\forall v \in V, t \in J.
+    \label{eq_5}
+\end{equation}
+%%%%
+\begin{itemize}
+    \item Spatial discretization
+\end{itemize}
+
+%%%%%%%%%
+find $u_h \in V_h = \{v: v \in V, v \in C^0, v \in P_1([x_i,x_{i+1}]), \forall i=\overline{1,N-1}\}$ such that 
+\begin{equation}
+    \int_0^1 \frac{\partial u_h}{\partial t}v dx+ \int_0^1 \frac{\partial u_h}{\partial x}v dx= 0 \quad\forall v \in V_h
+\end{equation}
+Make an anzats, $u(x,t)_h = \sum\limits_{j=1}^{N-1} \xi_j(t)\phi_j(x)$. Where $\phi_j(x)$ is a hat function.
+
+\begin{equation}
+    \int_0^1 \frac{\partial \left(\sum\limits_{j=1}^{N-1} \xi_j(t)\phi_j(x)\right)}{\partial t}v dx+ \int_0^1 \frac{\partial \left(\sum\limits_{j=1}^{N-1} \xi_j(t)\phi_j(x)\right)}{\partial x}v dx= 0 \quad\forall v \in V_h
+\end{equation}
+
+\begin{equation}
+    \int_0^1 \sum\limits_{j=1}^{N-1} \frac{\partial\xi_j(t)}{\partial t}\phi_j(x)v dx+ \int_0^1  \sum\limits_{j=1}^{N-1} \xi_j(t)\frac{\partial\phi_j(x)}{\partial x}v dx= 0 \quad\forall v \in V_h
+\end{equation}
+Since this holds for for all $v \in V_h$ we can let v be $\phi_i(x)$, where we let i range from 1 to N-1
+\begin{equation}
+    \int_0^1 \sum\limits_{j=1}^{N-1} \frac{\partial\xi_j(t)}{\partial t}\phi_j(x)\phi_i(x) dx+ \int_0^1  \sum\limits_{j=1}^{N-1} \xi_j(t)\frac{\partial\phi_j(x)}{\partial x}\phi_i(x) dx= 0 \quad for\ i=\overline{1,N-1}
+\end{equation}
+Now we can rewrite this a a linear system of equations as
+\begin{equation}
+    M\frac{\partial \Vec{\xi}}{\partial t} = -L\Vec{\xi}
+\end{equation}
+where
+\begin{equation}
+    M_{j,i} = \int_0^1\phi_j(x)\phi_i(x)dx
+\end{equation}
+\begin{equation}
+    L_{j,i} = \int_0^1\frac{\partial\phi_j(x)}{\partial x}\phi_i(x)dx
+\end{equation}
+For the case of linear piece wise basis functions, these integrals are quite trivial to calculate analytically, so the matrices can be expressed as
+\begin{equation}
+    M = \begin{bmatrix}
+        4& 1& 0& \dots& 0& 1\\
+        1& 4& 1& 0& \dots& 0\\
+        0& 1& 4& 1& 0& \dots\\
+        \vdots&&&\ddots\\
+        0& \dots& 0& 1& 4& 1\\
+        1& 0& \dots& 0& 1& 4
+    \end{bmatrix}\frac{\Delta x}{6}
+\end{equation}
+\begin{equation}
+    L = \begin{bmatrix}
+        0& 1& 0& \dots& 0& -1\\
+        -1& 0& 1& 0& \dots& 0\\
+        0& -1& 0& 1& 0& \dots\\
+        \vdots&&&\ddots\\
+        0& \dots& 0& -1& 0& 1\\
+        1& 0& \dots& 0& -1& 0
+    \end{bmatrix}\frac{1}{2}
+\end{equation}
+\subsection{Von Neumann Stability Analysis}
+\subsubsection{Central Difference}
+\begin{equation}
+    \frac{\partial u}{\partial t} + \frac{\partial u}{\partial x} = 0
+\end{equation}
+
+\begin{equation}
+    \frac{u_{n}^{j+1} - u_{n}^j}{\Delta t} + \frac{u_{n+1}^j - u_{n-1}^j}{2 \Delta x} = 0
+\end{equation}
+
+
+\begin{equation}
+    u_{n}^{j+1}  = u_{n}^j - \frac{\Delta t}{2 \Delta x} \left(u_{n+1}^j - u_{n-1}^j\right)
+\end{equation}
+
+Apply the anzats $u_n^j = \xi^j e^{ikn}$.
+
+\begin{equation}
+    \xi^{j} e^{ikn}(\xi) = \xi^je^{ikn} \left( 1 - \frac{\Delta t}{2 \Delta x} \left(e^{ik} - e^{-ik}\right)\right)
+\end{equation}
+
+Divide by $\xi^j e^{ikn}$ and simplify with $e^{ik} - e^{-ik} = 2i \sin(k)$.
+
+\begin{equation}
+    \xi = 1 - \frac{i\Delta t \sin(k)}{ \Delta x}
+\end{equation}
+
+In order to fulfill the von Neumann stability condition $\mid\xi\mid \leq 1$
+
+\begin{equation}
+    \mid \xi \mid^2 = 1 - \left(\frac{i\Delta t \sin(k)}{ \Delta x}\right)^2 = 1 + \left(\frac{\Delta t \sin(k)}{\Delta x}\right)^2
+\end{equation}
+
+Since $\sin^2$ is always greater than or equal to one, the system is unconditionally unstable.
+
+\subsubsection{Finite Element}
+\begin{equation}
+    \frac{\partial u}{\partial t} + \frac{\partial u}{\partial x} = 0
+\end{equation}
+
+Rewriting this system gives us:
+
+\begin{equation}
+    M\frac{du}{dt} = O(u)
+\end{equation}
+
+Where $M = \frac{\Delta x}{6}[1, 4, 1]$ and $O(u) = -(L+\alpha K)$. Here L is the the matrix $L = [\frac{-1}{2}, 0, \frac{1}{2}]$, $\alpha$ is a constant and the matrix and K is $K = \frac{1}{\Delta x}[-1, 2, -1]$. Inserting this in (4) and denoting $\Bar{u} = \begin{bmatrix} u_{n-1}^j & u_{n}^j & u_{n+1}^j \end{bmatrix}'$ gives us the following system.
+
+\begin{equation}
+    \frac{\Delta x}{6}
+    \begin{bmatrix}
+        1 & 4 & 1
+    \end{bmatrix}    
+    \frac{d}{dt} \Bar{u} =
+    -(\begin{bmatrix}
+        \frac{-1}{2} & 0 & \frac{1}{2}
+    \end{bmatrix}
+    + \frac{\alpha}{\Delta x} 
+    \begin{bmatrix}
+        -1 & 2 & -1
+    \end{bmatrix})
+    \Bar{u}
+\end{equation}
+
+The first case is when $\alpha = 0$ which implies that the stability term will be zero. We get the following system.
+
+\begin{equation}
+\label{a=0}
+        \frac{\Delta x}{3}
+    \begin{bmatrix}
+        1 & 4 & 1
+    \end{bmatrix}    
+    \frac{d}{dt} \Bar{u} = u_{n-1}^{j} - u_{n+1}^{j}
+\end{equation}
+
+The derivative can be approximated with Forward Euler $\frac{d}{dt} \Bar{u_{n}} = \frac{u_n^{j+1} - u_n^j}{\Delta t}$ and inserting this into equation $\ref{a=0}$ gives us the following system.
+
+\begin{equation}
+        (u_{n-1}^{j+1} - u_{n-1}^j)
+        +4(u_n^{j+1} - u_n^j)
+        +(u_{n+1}^{j+1} - u_{n+1}^j)
+    = \frac{3 \Delta t}{\Delta x}\left(u_{n-1}^{j} - u_{n+1}^{j}\right)
+\end{equation}
+
+Rewriting this gives us.
+
+\begin{equation}
+        u_{n-1}^{j+1}
+        +4u_n^{j+1} 
+        +u_{n+1}^{j+1}
+    = \frac{3 \Delta t}{\Delta x}\left(u_{n-1}^{j} - u_{n+1}^{j}\right) + (u_{n-1}^j + 4u_n^j + u_{n+1}^j)
+\end{equation}
+
+We make an anzats: $u_n^j = \xi^{j}e^{ikn}$.
+
+\begin{equation}
+        \xi^{j}e^{ikn}(\xi e^{-ik}+4\xi+\xi e^{ik}) = \xi^je^{ikn}\left(\frac{3 \Delta t}{ \Delta x}\left(e^{-ik} - e^{ik}\right) + \left(e^{-ik} + 4 + e^{ik}\right)\right)
+\end{equation}
+
+After assuming $\xi^je^{ikn} \neq 0$ to disregard trivial solutions the system can be written as
+
+
+\begin{equation}
+        \xi \left(e^{-ik}+4+e^{ik}\right) = \frac{3 \Delta t}{\Delta x}\left(e^{-ik} - e^{ik}\right) + \left(e^{-ik} + 4 + e^{ik}\right)
+\end{equation}
+
+Since $e^{ik} + e^{-ik} = 2\cos(k)$ and $e^{ik} - e^{-ik} = 2i \sin(k)$ we can simplify the system.
+
+\begin{equation}
+        \xi \left(2\cos(k) +4\right) = \frac{3 \Delta t}{\Delta x}\left(-2i \sin(k)\right) + \left(2\cos(k) + 4\right)
+\end{equation}
+
+
+\begin{equation}
+        \xi  = 1 - \frac{i3 \Delta t \sin(k)}{\Delta x\left(\cos(k) +2\right)} 
+\end{equation}
+
+In order to fulfill the von Neumann stability condition $\mid  \xi \mid \leq 1$.
+
+\begin{equation}
+    \mid \xi \mid^2 = 1 + \left(\frac{3 \Delta t \sin(k)}{\Delta x\left(\cos(k) +2\right)}\right)^2 \leq 1
+\end{equation}
+
+Since $\tan^2$ is always bigger than 0 the system is unconditionally unstable.
+
+\section{Results}
+\subsection{Stability}
+There are two ways for proving stability: the Fourier
+analysis (von Neumann stability analysis), and the energy method.
+In general, the Fourier analysis applies only to linear constant coefficient
+problems, while the energy method can be used for more general
+problems with variable coefficients and nonlinear terms [1].
+
+\section{Discussion}
+One can solve the problem with different number of grid points. The case is usual that when the grid is not fine enough, the
+numerical solution can not approximate the analytic solution well. Use of
+finer mesh reduces both the amplitude and phase errors significantly.
+
+
+
+
+
+\section{Conclusion}
+
+
 \section{Questions!!!}
 10 v\\
 - What is the plan for the project? Deadlines, presentations, etc\\
@@ -99,12 +444,20 @@ affected by round-off errors. It means that it is not recommended to use Newton-
 - Do you have any suggested readings for our literature study?\\
 - Could we have some sort of weekly meeting, where we can discuss our progress?\\
 
+
+-How high orders should we focus on?\\
+-Not sure if the Von Neumann applied on FEM is correct?\\
+-Von Neumann for a/=0\\
+-Are we gonna use the eigenvectors method?
+
 \begin{comment}
 J. D. D. Basabe and M. K. Sen, “Stability of the high-order finite elements for acoustic or elastic wave
 propagation with high-order time stepping,” Geophysical Journal International, vol. 181, no. 1, pp. 577–590,
 2010.
 
 \end{comment}
+
+% need to talk about Truncation error, consistence, convergence and order of accuracy.
 
 \section{References}
 \begin{itemize}
