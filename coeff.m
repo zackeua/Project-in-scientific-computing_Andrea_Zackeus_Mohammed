@@ -7,7 +7,7 @@ function c = coeff(degree,h)
 
     %h = 0.1;
     %degree = 1;
-    % grund tanken bakom A*C=I kommer från hur vi beräknade koefficienterna
+    % Grundtanken bakom A*C=I kommer från hur vi beräknade koefficienterna
     % till baskunktionerna i 2d fallet i tillämpad fem kursen där hade vi
     % fallet
     % [1, x1, y1;  [a   [1
