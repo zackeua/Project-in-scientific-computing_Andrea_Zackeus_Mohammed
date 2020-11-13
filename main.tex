@@ -238,39 +238,60 @@ find $u(x,t)$ such that for every fixed $t \in J, u \in V$ and
 \end{equation}
 %%%%
 \begin{itemize}
-    \item Spatial discretization
-\end{itemize}
-
-%%%%%%%%%
-find $u_h \in V_h = \{v: v \in V, v \in C^0, v \in P_1([x_i,x_{i+1}]), \forall i=\overline{1,N-1}\}$ such that 
+    \item Spatial discretization:
+    Let $ \Gamma  $ be: $0 < {x  }_{ 1 } < {x  }_{ 2 } < ... < {x  }_{ N }=1$ a mesh of the interval I and let ${ V }_{h  } \subset  V$ be the space of continuous piecewise linear functions on this mesh.
+    %%
+    \begin{equation}
+        V_h = \{v: v \in C^0 (I), v \in P_1([x_i,x_{i+1}]), \forall i=\overline{1,N-1},v(x+1,t)=v(x,t) \},
+        \label{eq_6}
+    \end{equation}
+    %%%
+    then the space discrete counterpart of the variational formulation (The standard Galerkin finite elemet method (standard GFEM)) takes the form: find $u_h$ such that for every fixed $t \in J$, $u_h \in V_h$ and
+    %%%%
 \begin{equation}
-    \int_0^1 \frac{\partial u_h}{\partial t}v dx+ \int_0^1 \frac{\partial u_h}{\partial x}v dx= 0 \quad\forall v \in V_h
+    \int_0^1 \frac{\partial u_h}{\partial t}v dx+ \int_0^1 \frac{\partial u_h}{\partial x}v dx= 0 \quad\forall v \in V_h,  t \in J.
+      \label{eq_7}
 \end{equation}
-Make an anzats, $u(x,t)_h = \sum\limits_{j=1}^{N-1} \xi_j(t)\phi_j(x)$. Where $\phi_j(x)$ is a hat function.
+Make an ansatz, $u_h(x,t) = \sum\limits_{j=1}^{N-1} \xi_j(t)\phi_j(x)$, where $\phi_j(x)$ is a hat function. Substituting this ansatz in the standard GFEM of \ref{eq_7}, we get:
 
+%%%%
 \begin{equation}
-    \int_0^1 \frac{\partial \left(\sum\limits_{j=1}^{N-1} \xi_j(t)\phi_j(x)\right)}{\partial t}v dx+ \int_0^1 \frac{\partial \left(\sum\limits_{j=1}^{N-1} \xi_j(t)\phi_j(x)\right)}{\partial x}v dx= 0 \quad\forall v \in V_h
+    \int_0^1 \frac{\partial \left(\sum\limits_{j=1}^{N-1} \xi_j(t)\phi_j(x)\right)}{\partial t}v dx+ \int_0^1 \frac{\partial \left(\sum\limits_{j=1}^{N-1} \xi_j(t)\phi_j(x)\right)}{\partial x}v dx= 0 \quad\forall v \in V_h,for\ i=\overline{1,N-1}, t \in J
+    \label{eq_8}
 \end{equation}
-
+%%%
+%%%%
 \begin{equation}
-    \int_0^1 \sum\limits_{j=1}^{N-1} \frac{\partial\xi_j(t)}{\partial t}\phi_j(x)v dx+ \int_0^1  \sum\limits_{j=1}^{N-1} \xi_j(t)\frac{\partial\phi_j(x)}{\partial x}v dx= 0 \quad\forall v \in V_h
+    \int_0^1 \sum\limits_{j=1}^{N-1} \frac{\partial\xi_j(t)}{\partial t}\phi_j(x)v dx+ \int_0^1  \sum\limits_{j=1}^{N-1} \xi_j(t)\frac{\partial\phi_j(x)}{\partial x}v dx= 0 \quad\forall v \in V_h,for\ i=\overline{1,N-1}, t \in J
+    \label{eq_9}
 \end{equation}
 Since this holds for for all $v \in V_h$ we can let v be $\phi_i(x)$, where we let i range from 1 to N-1
+%%%%
 \begin{equation}
-    \int_0^1 \sum\limits_{j=1}^{N-1} \frac{\partial\xi_j(t)}{\partial t}\phi_j(x)\phi_i(x) dx+ \int_0^1  \sum\limits_{j=1}^{N-1} \xi_j(t)\frac{\partial\phi_j(x)}{\partial x}\phi_i(x) dx= 0 \quad for\ i=\overline{1,N-1}
+    \sum _{ j=1 }^{ N-1 } \frac { \partial \xi _{ j }(t) }{ \partial t } \int _{ 0 }^{ 1 } \phi _{ j }(x)\phi _{ i }(x)dx+\sum _{ j=1 }^{ N-1 } \xi _{ j }(t)\int _{ 0 }^{ 1 } \frac { \partial \phi _{ j }(x) }{ \partial x } \phi _{ i }(x)dx=0\quad for i=\overline { 1,N-1 } ,t\in J
+\label{eq_10}
 \end{equation}
+%%%%
 Now we can rewrite this a a linear system of equations as
+%%%
 \begin{equation}
-    M\frac{\partial \Vec{\xi}}{\partial t} = -L\Vec{\xi}
+    M\frac{\partial \Vec{\xi}}{\partial t} = -L\Vec{\xi},t\in J
+    \label{eq_11}
 \end{equation}
+%%%%%
 where
+%%%
 \begin{equation}
     M_{j,i} = \int_0^1\phi_j(x)\phi_i(x)dx
+     \label{eq_12}
 \end{equation}
+%%%%%
 \begin{equation}
-    L_{j,i} = \int_0^1\frac{\partial\phi_j(x)}{\partial x}\phi_i(x)dx
+    L_{j,i} = \int_0^1\frac{\partial\phi_j(x)}{\partial x}\phi_i(x)dx,
+     \label{eq_13}
 \end{equation}
-For the case of linear piece wise basis functions, these integrals are quite trivial to calculate analytically, so the matrices can be expressed as
+%%%%
+where $i,j =\overline { 1,N-1 }$. For the case of linear piece wise basis functions, these integrals are quite trivial to calculate analytically, so the matrices can be expressed as
 \begin{equation}
     M = \begin{bmatrix}
         4& 1& 0& \dots& 0& 1\\
@@ -291,6 +312,20 @@ For the case of linear piece wise basis functions, these integrals are quite tri
         1& 0& \dots& 0& -1& 0
     \end{bmatrix}\frac{1}{2}
 \end{equation}
+%%%
+    
+   
+   
+   
+   
+   \item Time discretization: 
+    
+\end{itemize}
+
+%%%%%%%%%
+
+
+%%%
 \subsection{Von Neumann Stability Analysis}
 \subsubsection{Central Difference}
 \begin{equation}
