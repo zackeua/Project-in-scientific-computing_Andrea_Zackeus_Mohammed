@@ -94,9 +94,9 @@ while T < 1
    u3 = u3 + (g1 + 2*g2 + 2*g3 + g4)/6;
    
    u4 = u4 - dt*Central4*u4;
-   temp = u5(:,2); %nasta tids steg n+1 :u_n
-   u5(:,2) = u5(:,1) - 2*dt*Central2*u5(:,2);% u5(:,1) f?rg?ende tids steg %u5(:,2):u_n+1
-   u5(:,1) = temp;% det blir som en for loop
+   temp = u5(:,2); %nasta tids steg n+1 
+   u5(:,2) = u5(:,1) - 2*dt*Central2*u5(:,2);% u5(:,1) f?rg?ende tids steg
+   u5(:,1) = temp;
    
    temp = u6(:,2);
    u6(:,2) = u6(:,1) - 2*dt*Central4*u6(:,2);

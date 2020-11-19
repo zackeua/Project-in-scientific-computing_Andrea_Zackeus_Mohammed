@@ -43,8 +43,7 @@ for degree = 2*(1:8)
             Central(i,mod(i+j-2-floor(length(w)/2),m)+1) = w(j);
         end
     end
-    Central = -Central;
-    ei = eig(Central);
+    ei = eig(-Central);
     eimax = max(abs(ei));
     dtmax = r/eimax;
     maxReEi = max(real(ei));
@@ -69,7 +68,7 @@ for degree = 2*(1:8)
     dt = dtmax*0.9/2;
     T = 0;
     while T < 1
-       g1 = dt * Central * u1;%% la minus i Central = -Central
+       g1 = dt * Central * u1;
        g2 = dt * Central * (u1 + g1/2);
        g3 = dt * Central * (u1 + g2/2);
        g4 = dt * Central * (u1 + g3);

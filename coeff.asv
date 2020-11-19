@@ -1,6 +1,5 @@
 function c = coeff(degree,h)
-% FEM    
-%{
+    %{
     Function to calculate coefficients to
     lagrange basis functions for a
     given degree and step length, h.
