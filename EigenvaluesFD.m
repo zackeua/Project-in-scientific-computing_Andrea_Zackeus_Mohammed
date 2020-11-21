@@ -43,7 +43,7 @@ for degree = 2*(1:8)
             Central(i,mod(i+j-2-floor(length(w)/2),m)+1) = w(j);
         end
     end
-    Central = -Central;
+    Central = -Central/h;
     ei = eig(Central);
     eimax = max(abs(ei));
     dtmax = r/eimax;
