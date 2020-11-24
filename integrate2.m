@@ -24,9 +24,9 @@ for i = 1:degree:length(M)-degree % Assemble FEM matrixes
     b = x(i+degree);
     for j = 1:degree+1
         for c = 1:degree+1
-            m(c,j) = diff(polyval(polyint(conv(phi(c,:),phi(i,:))),[a,b]));
-            l(c,j) = diff(polyval(polyint(conv(phiPrim(c,:),phi(i,:))),[a,b]));
-            k(c,j) = diff(polyval(polyint(conv(phiPrim(c,:),phiPrim(i,:))),[a,b]));
+            m(c,j) = diff(polyval(polyint(conv(phi(j,:),phi(c,:))),[a,b]));
+            l(c,j) = diff(polyval(polyint(conv(phiPrim(j,:),phi(c,:))),[a,b]));
+            k(c,j) = diff(polyval(polyint(conv(phiPrim(j,:),phiPrim(c,:))),[a,b]));
         end
     end
     M(i:degree+i,i:degree+i) = M(i:degree+i,i:degree+i) + m;
@@ -45,9 +45,9 @@ a = x(i);
 b = 1;
 for j = 1:degree+1
     for c = 1:degree+1
-        m(c,j) = diff(polyval(polyint(conv(phi(c,:),phi(i,:))),[a,b]));
-        l(c,j) = diff(polyval(polyint(conv(phiPrim(c,:),phi(i,:))),[a,b]));
-        k(c,j) = diff(polyval(polyint(conv(phiPrim(c,:),phiPrim(i,:))),[a,b]));
+        m(c,j) = diff(polyval(polyint(conv(phi(j,:),phi(c,:))),[a,b]));
+        l(c,j) = diff(polyval(polyint(conv(phiPrim(j,:),phi(c,:))),[a,b]));
+        k(c,j) = diff(polyval(polyint(conv(phiPrim(j,:),phiPrim(c,:))),[a,b]));
     end
 end
 

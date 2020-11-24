@@ -4,7 +4,7 @@ close all;
 %clc;
 left = 0; % boundaries
 right = 1;
-m = 60/4; % number of spatial points has to be dividable evenly by degree
+m = 60; % number of spatial points has to be dividable evenly by degree
 u0 = zeros([m,1]);
 x = zeros([m,1]);
 h = (right-left)/(m);
