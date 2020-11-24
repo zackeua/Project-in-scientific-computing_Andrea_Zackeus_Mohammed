@@ -15,7 +15,7 @@ K = zeros(pts);% lokal to global % slutade fraga har
 
 
 for i = 1:degree:length(M)-degree % Assemble FEM matrixes
-    phi = coeff(degree,x(i:degree+i)); % generate coefficients of basis functions
+    phi = coeff2(degree,x(i:degree+i)); % generate coefficients of basis functions
     phiPrim = zeros(degree+1,degree);% vi forlorar en kolumn pga derivering
     for j=1:degree+1 % differentiate basis functions
         phiPrim(j,:) = polyder(phi(j,:));
@@ -24,9 +24,9 @@ for i = 1:degree:length(M)-degree % Assemble FEM matrixes
     b = x(i+degree);
     for j = 1:degree+1
         for c = 1:degree+1
-            m(c,j) = diff(polyval(polyint(conv(phi(c,:),phi(i,:))),[a,b]));
-            l(c,j) = diff(polyval(polyint(conv(phiPrim(c,:),phi(i,:))),[a,b]));
-            k(c,j) = diff(polyval(polyint(conv(phiPrim(c,:),phiPrim(i,:))),[a,b]));
+            m(c,j) = diff(polyval(polyint(conv(phi(j,:),phi(c,:))),[a,b]));
+            l(c,j) = diff(polyval(polyint(conv(phiPrim(j,:),phi(c,:))),[a,b]));
+            k(c,j) = diff(polyval(polyint(conv(phiPrim(j,:),phiPrim(c,:))),[a,b]));
         end
     end
     M(i:degree+i,i:degree+i) = M(i:degree+i,i:degree+i) + m;
@@ -36,18 +36,18 @@ end
 
 
 
-phi = coeff(degree,[x(i:end) 1]); % generate coefficients of basis functions
+phi = coeff2(degree,[x(i+degree:end); 1]); % generate coefficients of basis functions
 phiPrim = zeros(degree+1,degree);% vi forlorar en kolumn pga derivering
 for j=1:degree+1 % differentiate basis functions
     phiPrim(j,:) = polyder(phi(j,:));
 end
-a = x(i);
+a = x(i+degree);
 b = 1;
 for j = 1:degree+1
     for c = 1:degree+1
-        m(c,j) = diff(polyval(polyint(conv(phi(c,:),phi(i,:))),[a,b]));
-        l(c,j) = diff(polyval(polyint(conv(phiPrim(c,:),phi(i,:))),[a,b]));
-        k(c,j) = diff(polyval(polyint(conv(phiPrim(c,:),phiPrim(i,:))),[a,b]));
+        m(c,j) = diff(polyval(polyint(conv(phi(j,:),phi(c,:))),[a,b]));
+        l(c,j) = diff(polyval(polyint(conv(phiPrim(j,:),phi(c,:))),[a,b]));
+        k(c,j) = diff(polyval(polyint(conv(phiPrim(j,:),phiPrim(c,:))),[a,b]));
     end
 end
 

@@ -1,7 +1,7 @@
 %% Setup
 clear;
 close all;
-%clc;
+clc;
 left = 0; % boundaries
 right = 1;
 m = 60; % number of spatial points has to be dividable evenly by degree
@@ -17,15 +17,17 @@ analytic = @(x,t) real(u_0*exp(1i*k*(x-t)));
 
 plotting = 0; % s??tt till 1 om du vill plotta
 
+%for i = 1:m % evenly spaced points
+%    x(i) = h*(i-1);
+%end
+
+% Gauss-Lobatto points: välj m+1 punkter och ta bort sista
+[x,w]= legendre_gauss_lobatto(m+1);
+x= (right-left)/2 * x +(right -left)/2; 
+x=flip(x);
+x = x(1:end-1);
 
 for i = 1:m
-    % evenly spaced points
-%     x(i) = h*(i-1);
-%     Gauss-Lobatto points
-    [x,w]= legendre_gauss_lobatto (m);
-    x= (right -left)/2 * x +(right -left)/2; 
-    x=flip(x);
-    
     u0(i) = analytic(x(i),0);
 end
 
