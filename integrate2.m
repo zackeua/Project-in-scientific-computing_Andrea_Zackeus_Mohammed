@@ -15,7 +15,7 @@ K = zeros(pts);% lokal to global % slutade fraga har
 
 
 for i = 1:degree:length(M)-degree % Assemble FEM matrixes
-    phi = coeff(degree,x(i:degree+i)); % generate coefficients of basis functions
+    phi = coeff2(degree,x(i:degree+i)); % generate coefficients of basis functions
     phiPrim = zeros(degree+1,degree);% vi forlorar en kolumn pga derivering
     for j=1:degree+1 % differentiate basis functions
         phiPrim(j,:) = polyder(phi(j,:));
@@ -36,7 +36,7 @@ end
 
 
 
-phi = coeff(degree,[x(i:end) 1]); % generate coefficients of basis functions
+phi = coeff2(degree,[x(i:end) 1]); % generate coefficients of basis functions
 phiPrim = zeros(degree+1,degree);% vi forlorar en kolumn pga derivering
 for j=1:degree+1 % differentiate basis functions
     phiPrim(j,:) = polyder(phi(j,:));
