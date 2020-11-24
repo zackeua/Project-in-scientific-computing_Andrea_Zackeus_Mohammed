@@ -4,7 +4,7 @@ close all;
 %clc;
 left = 0; % boundaries
 right = 1;
-m = 60; % number of spatial points has to be dividable evenly by degree
+m = 60*2*2; % number of spatial points has to be dividable evenly by degree
 u0 = zeros([m,1]);
 x = zeros([m,1]);
 h = (right-left)/(m);
@@ -15,15 +15,21 @@ analytic = @(x,t) real(u_0*exp(1i*k*(x-t)));
 
 
 
-plotting = 0; % sätt till 1 om du vill plotta
+plotting = 0; % s??tt till 1 om du vill plotta
 
 
 for i = 1:m
-    x(i) = h*(i-1);
+    % evenly spaced points
+%     x(i) = h*(i-1);
+%     Gauss-Lobatto points
+    [x,w]= legendre_gauss_lobatto (m);
+    x= (right -left)/2 * x +(right -left)/2; 
+    x=flip(x);
+    
     u0(i) = analytic(x(i),0);
 end
 
-% beräkna stabilitetsområde för RK4 och RK1/explicit euler
+% ber??kna stabilitetsomr??de f??r RK4 och RK1/explicit euler
 xi = -3:0.01:0.5;
 yi = -3:0.01:3;
 [xi,yi] = meshgrid(xi,yi);
@@ -35,6 +41,7 @@ stabRK1 = abs(1+z);
 for degree = 1:6
     %% Assemble mass and stiffness matrix
     [M,L,K] = integrate(degree,h,m/degree-1);
+    % m/degree-1=antalet elements
     a = 0;
     %a = h/2000;
     RK = -M\(L+a*K);
@@ -73,7 +80,7 @@ for degree = 1:6
     dt = dtmax*0.9;
     T = 0;
     while T < 30
-       g1 = dt * RK * u1; %% minus är inlaggt i RK = -M\(L+a*K)
+       g1 = dt * RK * u1; %% minus ??r inlaggt i RK = -M\(L+a*K)
        g2 = dt * RK * (u1 + g1/2);
        g3 = dt * RK * (u1 + g2/2);
        g4 = dt * RK * (u1 + g3);
@@ -92,7 +99,7 @@ for degree = 1:6
     dt = dtmax*0.9;
     T = 0;
     while T < 30
-       g1 = dt * RK_Masslumping * u1; %% minus är inlaggt i RK = -M\(L+a*K)
+       g1 = dt * RK_Masslumping * u1; %% minus ??r inlaggt i RK = -M\(L+a*K)
        g2 = dt * RK_Masslumping * (u1 + g1/2);
        g3 = dt * RK_Masslumping * (u1 + g2/2);
        g4 = dt * RK_Masslumping * (u1 + g3);
