@@ -4,7 +4,7 @@ close all;
 %clc;
 left = 0; % boundaries
 right = 1;
-m = 60; % number of spatial points has to be dividable evenly by degree
+m = 60/4; % number of spatial points has to be dividable evenly by degree
 u0 = zeros([m,1]);
 x = zeros([m,1]);
 h = (right-left)/(m);
@@ -54,7 +54,7 @@ for degree = 1:6
     disp(['Order ', num2str(degree), ' with masslumping biggest possible timestep ', num2str(dtmax_Masslumping)])
     
     
-    if plotting == 1
+    if plotting == 0
         figure;
         contour(xi,yi,stabRK4,[1,1],'r')
         hold on;
@@ -64,23 +64,27 @@ for degree = 1:6
         title(['Eigenvalues for P', num2str(degree),' elements'])
         xlabel('Re(\lambda)')
         ylabel('Im(\lambda)')
+        ylim([-3 3]);
+        xlim([-3 3]);
+        axis equal;
         legend('RK4','explicit euler', '\lambda\cdot dt', '\lambda_{Masslumping}\cdot dt', 'Location','best')
         hold off;
     end
         
     %% w/o masslumping timestepping
-    u1 = u0;
-    dt = dtmax*0.9;
-    T = 0;
-    while T < 30
-       g1 = dt * RK * u1; %% minus är inlaggt i RK = -M\(L+a*K)
-       g2 = dt * RK * (u1 + g1/2);
-       g3 = dt * RK * (u1 + g2/2);
-       g4 = dt * RK * (u1 + g3);
-       u1 = u1 + (g1 + 2*g2 + 2*g3 + g4)/6;
-       T = T + dt;
-    end
     if plotting == 1
+        u1 = u0;
+        dt = dtmax*0.9;
+        T = 0;
+        while T < 30
+           g1 = dt * RK * u1; %% minus är inlaggt i RK = -M\(L+a*K)
+           g2 = dt * RK * (u1 + g1/2);
+           g3 = dt * RK * (u1 + g2/2);
+           g4 = dt * RK * (u1 + g3);
+           u1 = u1 + (g1 + 2*g2 + 2*g3 + g4)/6;
+           T = T + dt;
+        end
+    
         figure;
         plot([x; 1],[analytic(x,T); analytic(x(1),T)],[x; 1], [u1; u1(1)]);
         legend('analytic','RK4',"Location","best");
@@ -88,18 +92,19 @@ for degree = 1:6
     end
     
     %% MAss lumping time stepping
-    u1 = u0;
-    dt = dtmax*0.9;
-    T = 0;
-    while T < 30
-       g1 = dt * RK_Masslumping * u1; %% minus är inlaggt i RK = -M\(L+a*K)
-       g2 = dt * RK_Masslumping * (u1 + g1/2);
-       g3 = dt * RK_Masslumping * (u1 + g2/2);
-       g4 = dt * RK_Masslumping * (u1 + g3);
-       u1 = u1 + (g1 + 2*g2 + 2*g3 + g4)/6;
-       T = T + dt;
-    end
-    if plotting == 0
+    if plotting == 1
+        u1 = u0;
+        dt = dtmax*0.9;
+        T = 0;
+        while T < 30
+           g1 = dt * RK_Masslumping * u1; %% minus är inlaggt i RK = -M\(L+a*K)
+           g2 = dt * RK_Masslumping * (u1 + g1/2);
+           g3 = dt * RK_Masslumping * (u1 + g2/2);
+           g4 = dt * RK_Masslumping * (u1 + g3);
+           u1 = u1 + (g1 + 2*g2 + 2*g3 + g4)/6;
+           T = T + dt;
+        end
+    
         figure;
         plot([x; 1],[analytic(x,T); analytic(x(1),T)],[x; 1], [u1; u1(1)]);
         legend('analytic','RK4',"Location","best");
@@ -108,6 +113,6 @@ for degree = 1:6
     
     
     
-    e = analytic(x,T) - u1;
-    E = norm(e'*e);
+    %e = analytic(x,T) - u1;
+    %E = norm(e'*e);
 end
