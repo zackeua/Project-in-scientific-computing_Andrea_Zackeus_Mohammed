@@ -1,5 +1,3 @@
-clear;
-clc;
 
 % assembly of FEM matrixes for equidistant grid
 

@@ -1,4 +1,6 @@
 function [M,L,K] = integrate(degree,h,n)
+% Integrates "exactly" P(degree) elements with a uniform spatial step length h and n nodal
+% points and assembles Mass (M), Load (L) and Stiffness (K) matrices.
 % assembly of FEM matrixes for equidistant grid
 
 %degree = 2; % degree of FEM basis functions
