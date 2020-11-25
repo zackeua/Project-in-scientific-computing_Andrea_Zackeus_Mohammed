@@ -15,17 +15,17 @@ analytic = @(x,t) real(u_0*exp(1i*k*(x-t)));
 
 
 
-plotting = 0; % s??tt till 1 om du vill plotta
+plotting = 1; % s??tt till 1 om du vill plotta
 
-%for i = 1:m % evenly spaced points
-%    x(i) = h*(i-1);
-%end
+for i = 1:m % evenly spaced points
+   x(i) = h*(i-1);
+end
 
-% Gauss-Lobatto points: välj m+1 punkter och ta bort sista
-[x,w]= legendre_gauss_lobatto(m+1);
-x= (right-left)/2 * x +(right -left)/2; 
-x=flip(x);
-x = x(1:end-1);
+% Gauss-Lobatto points: v??lj m+1 punkter och ta bort sista
+% [x,w]= legendre_gauss_lobatto(m+1);
+% x= (right-left)/2 * x +(right -left)/2; 
+% x=flip(x);
+% x = x(1:end-1);
 
 for i = 1:m
     u0(i) = analytic(x(i),0);
@@ -86,7 +86,7 @@ for degree = 1:6
         dt = dtmax*0.9;
         T = 0;
         while T < 30
-           g1 = dt * RK * u1; %% minus är inlaggt i RK = -M\(L+a*K)
+           g1 = dt * RK * u1; %% minus ??r inlaggt i RK = -M\(L+a*K)
            g2 = dt * RK * (u1 + g1/2);
            g3 = dt * RK * (u1 + g2/2);
            g4 = dt * RK * (u1 + g3);
@@ -106,7 +106,7 @@ for degree = 1:6
         dt = dtmax*0.9;
         T = 0;
         while T < 30
-           g1 = dt * RK_Masslumping * u1; %% minus är inlaggt i RK = -M\(L+a*K)
+           g1 = dt * RK_Masslumping * u1; %% minus ??r inlaggt i RK = -M\(L+a*K)
            g2 = dt * RK_Masslumping * (u1 + g1/2);
            g3 = dt * RK_Masslumping * (u1 + g2/2);
            g4 = dt * RK_Masslumping * (u1 + g3);

@@ -4,7 +4,8 @@ close all;
 clc;
 left = 0; % boundaries
 right = 1;
-m = 60; % number of spatial points has to be dividable evenly by degree
+% mo % m = 60
+m = 60/2/2; % number of spatial points has to be dividable evenly by degree
 u0 = zeros([m,1]);
 x = zeros([m,1]);
 h = (right-left)/(m);
@@ -42,7 +43,7 @@ stabRK1 = abs(1+z);
 %m = (degree+1)+n*degree-1
 for degree = 1:6
     %% Assemble mass and stiffness matrix
-    [M,L,K] = integrate2(degree,x);
+    [M,L,K] = integrate2_hermite(degree,x);
     % m/degree-1=antalet elements
     a = 0;
     %a = h/2000;

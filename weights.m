@@ -1,5 +1,5 @@
 function w = weights(p,m)
-% p: endast j?mna pga central
+% p: endast j?mna pga central FDM
     %{
     Function to generate weights, w for a derivative of order m,
     in our case m=1, central differnence stencil for order p.

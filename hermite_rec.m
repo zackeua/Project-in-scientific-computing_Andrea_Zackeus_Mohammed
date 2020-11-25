@@ -11,4 +11,4 @@ function h = hermite_rec(n)
 
        h = h1 - h2;
     end
-    %hermite_rec(3) gives [8     0   -12     0] which is 8x^3-12x
+    % hermite_rec(3) gives [8     0   -12     0] which is 8x^3-12x
