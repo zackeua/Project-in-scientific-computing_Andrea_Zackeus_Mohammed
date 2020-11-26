@@ -43,7 +43,6 @@ stabRK1 = abs(1+z);
 for degree = 1:6
     %% Assemble mass and stiffness matrix
     [M,L,K] = integrate2(degree,x);
-    % m/degree-1=antalet elements
     a = 0;
     %a = h/2000;
     RK = -M\(L+a*K);
@@ -124,4 +123,23 @@ for degree = 1:6
     
     %e = analytic(x,T) - u1;
     %E = norm(e'*e);
+  
 end
+%% The rescaled efficiency number
+degree = 1:6;
+C_eff= zeros(1,6);
+for i= 1:6
+    % the wave number
+    c= 1; % not sure if it should be equal to one??
+%     c=2*pi;
+    % the width of the interval
+    width= 1;
+    % total number of degrees of freedom % m/degree-1=antalet elements
+    N_dof = ( m/i-1)*i;
+    C_eff(i) = (sqrt(3)*c*dt*N_dof)/width;
+end
+figure;
+plot(degree,C_eff,'-*','MarkerIndices',1:length(C_eff) );
+xlabel('Polynomial degree');
+ylabel('Rescaled C_{eff}');
+title('Rescaled efficiency number as a function of the polynomial degree  ')

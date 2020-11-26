@@ -43,7 +43,6 @@ stabRK1 = abs(1+z);
 for degree = 1:6
     %% Assemble mass and stiffness matrix
     [M,L,K] = integrate2(degree,x);
-    % m/degree-1=antalet elements
     a = 0;
     %a = h/2000;
     RK = -M\(L+a*K);
@@ -124,4 +123,19 @@ for degree = 1:6
     
     %e = analytic(x,T) - u1;
     %E = norm(e'*e);
+  
 end
+%% The rescaled efficiency number
+figure;
+hold all;
+for degree = 1:6
+    % the wave number
+    c= 1; % not sure if it should be equal to one??
+% the width of the interval
+width= 1;
+% total number of degrees of freedom % m/degree-1=antalet elements
+    N_dof = ( m/degree-1)*degree;
+    C_eff = (sqrt(3)*c*dt*N_dof)/width;
+    plot(degree,C_eff);
+end
+
