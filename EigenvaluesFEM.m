@@ -8,30 +8,28 @@ m = 60; % number of spatial points has to be dividable evenly by degree
 u0 = zeros([m,1]);
 x = zeros([m,1]);
 h = (right-left)/(m);
+plotting = 1; % s??tt till 1 om du vill plotta
 
+%% Evenly spaced interpolation points or Gauss-Lobatto interpolation points
+% for i = 1:m % evenly spaced points
+%    x(i) = h*(i-1);
+% end
+
+% Gauss-Lobatto points: v??lj m+1 punkter och ta bort sista
+[x,w]= legendre_gauss_lobatto(m+1);
+x= (right-left)/2 * x +(right -left)/2; 
+x=flip(x);
+x = x(1:end-1);
+
+%% analytic solution
 u_0 = 1; % amplitude
 k = 2*pi; % wave frequency
 analytic = @(x,t) real(u_0*exp(1i*k*(x-t)));
-
-
-
-plotting = 1; % s??tt till 1 om du vill plotta
-
-for i = 1:m % evenly spaced points
-   x(i) = h*(i-1);
-end
-
-% Gauss-Lobatto points: v??lj m+1 punkter och ta bort sista
-% [x,w]= legendre_gauss_lobatto(m+1);
-% x= (right-left)/2 * x +(right -left)/2; 
-% x=flip(x);
-% x = x(1:end-1);
-
 for i = 1:m
     u0(i) = analytic(x(i),0);
 end
 
-% ber??kna stabilitetsomr??de f??r RK4 och RK1/explicit euler
+%% Stability region of RK4 och RK1/explicit euler
 xi = -3:0.01:0.5;
 yi = -3:0.01:3;
 [xi,yi] = meshgrid(xi,yi);

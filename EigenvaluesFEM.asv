@@ -9,6 +9,7 @@ u0 = zeros([m,1]);
 x = zeros([m,1]);
 h = (right-left)/(m);
 
+%% analytic solution
 u_0 = 1; % amplitude
 k = 2*pi; % wave frequency
 analytic = @(x,t) real(u_0*exp(1i*k*(x-t)));
@@ -17,15 +18,16 @@ analytic = @(x,t) real(u_0*exp(1i*k*(x-t)));
 
 plotting = 1; % s??tt till 1 om du vill plotta
 
-for i = 1:m % evenly spaced points
-   x(i) = h*(i-1);
-end
+%% Evenly spaced 
+% for i = 1:m % evenly spaced points
+%    x(i) = h*(i-1);
+% end
 
 % Gauss-Lobatto points: v??lj m+1 punkter och ta bort sista
-% [x,w]= legendre_gauss_lobatto(m+1);
-% x= (right-left)/2 * x +(right -left)/2; 
-% x=flip(x);
-% x = x(1:end-1);
+[x,w]= legendre_gauss_lobatto(m+1);
+x= (right-left)/2 * x +(right -left)/2; 
+x=flip(x);
+x = x(1:end-1);
 
 for i = 1:m
     u0(i) = analytic(x(i),0);
@@ -126,16 +128,20 @@ for degree = 1:6
   
 end
 %% The rescaled efficiency number
-figure;
-hold all;
-for degree = 1:6
+degree = 1:6;
+C_eff= zeros(1,6);
+for i= 1:6
     % the wave number
     c= 1; % not sure if it should be equal to one??
-% the width of the interval
-width= 1;
-% total number of degrees of freedom % m/degree-1=antalet elements
-    N_dof = ( m/degree-1)*degree;
-    C_eff = (sqrt(3)*c*dt*N_dof)/width;
-    plot(degree,C_eff);
+%     c=2*pi;
+    % the width of the interval
+    width= 1;
+    % total number of degrees of freedom % m/degree-1=antalet elements
+    N_dof = ( m/i-1)*i;
+    C_eff(i) = (sqrt(3)*c*dt*N_dof)/width;
 end
-
+figure;
+plot(degree,C_eff,'-*','MarkerIndices',1:length(C_eff) );
+xlabel('Polynomial degree');
+ylabel('Rescaled C_{eff}');
+title('Rescaled efficiency number as a function of the polynomial degree  ')
