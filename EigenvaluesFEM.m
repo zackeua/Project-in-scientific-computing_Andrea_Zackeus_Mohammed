@@ -11,15 +11,17 @@ h = (right-left)/(m);
 plotting = 1; % s??tt till 1 om du vill plotta
 
 %% Evenly spaced interpolation points or Gauss-Lobatto interpolation points
-% for i = 1:m % evenly spaced points
-%    x(i) = h*(i-1);
-% end
+for i = 1:m % evenly spaced points
+   x(i) = h*(i-1);
+end
 
 % Gauss-Lobatto points: v??lj m+1 punkter och ta bort sista
-[x,w]= legendre_gauss_lobatto(m+1);
-x= (right-left)/2 * x +(right -left)/2; 
-x=flip(x);
-x = x(1:end-1);
+% [x,w]= legendre_gauss_lobatto(m+1);
+% % x= (right-left)/2 * x +(right -left)/2; % fel tror jag
+% x= (right-left)/2 * x +(right +left)/2;
+% w= w*((right-left)/2); % according to what Gunilla said
+% x=flip(x);
+% x = x(1:end-1);
 
 %% analytic solution
 u_0 = 1; % amplitude
@@ -40,7 +42,10 @@ stabRK1 = abs(1+z);
 %m = (degree+1)+n*degree-1
 for degree = 1:6
     %% Assemble mass and stiffness matrix
+    % For evenly spaced points (using or not using Masslumping)
     [M,L,K] = integrate2(degree,x);
+    % For Gauss-Lobatto points and Gauss-Lobatto quadrature
+% [M,L,K] = integrate2_GaussLobatto(degree,x,w);
     a = 0;
     %a = h/2000;
     RK = -M\(L+a*K);
@@ -60,7 +65,7 @@ for degree = 1:6
     disp(['Order ', num2str(degree), ' with masslumping biggest possible timestep ', num2str(dtmax_Masslumping)])
     
     
-    if plotting == 0
+    if plotting == 1
         figure;
         contour(xi,yi,stabRK4,[1,1],'r')
         hold on;

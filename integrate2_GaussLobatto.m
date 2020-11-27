@@ -1,4 +1,6 @@
-function [M,L,K] = integrate2_hermite(degree,x)
+function [M,L,K] = integrate2_GaussLobatto(degree,x,w)
+% x: Gauss Lobatto points
+% w: the Gauss Lobatto weights
 % Integrates "exactly" P(degree) elements with a uniform spatial step length h and n nodal
 % points and assembles Mass (M), Load (L) and Stiffness (K) matrices.
 % assembly of FEM matrixes for equidistant grid
@@ -15,25 +17,31 @@ K = zeros(pts);% lokal to global % slutade fraga har
 
 
 for i = 1:degree:length(M)-degree % Assemble FEM matrixes
-    %mo
-    %phi = coeff2(degree,x(i:degree+i)); % generate coefficients of basis functions
-    phi = hermite_rec(degree);
-    %
+    phi = coeff2(degree,x(i:degree+i)); % generate coefficients of basis functions
     phiPrim = zeros(degree+1,degree);% vi forlorar en kolumn pga derivering
-%mo%     for j=1:degree+1 % differentiate basis functions
-    for j=1:degree-1 % differentiate basis functions
+    for j=1:degree+1 % differentiate basis functions
         phiPrim(j,:) = polyder(phi(j,:));
     end
     a = x(i);
     b = x(i+degree);
-   %mo% for j = 1:degree+1
-   for j = 1:degree
-      %mo%  for c = 1:degree+1
-        while  c = 1:degree & (mod ( degree , 2 ) ~= 0)%mo%
-  
-            m(c,j) = diff(polyval(polyint(conv(phi(j,:),phi(c,:))),[a,b]));
-            l(c,j) = diff(polyval(polyint(conv(phiPrim(j,:),phi(c,:))),[a,b]));
-            k(c,j) = diff(polyval(polyint(conv(phiPrim(j,:),phiPrim(c,:))),[a,b]));
+    
+    x(i)= (b-a)/2 * x(i) +(b +a)/2;
+    w(i)= w(i)*((b-a)/2); % according to what Gunilla said
+%     x=flip(x);
+%     x = x(1:end-1);
+    for j = 1:degree+1
+        for c = 1:degree+1
+            f1 =conv(phi(j,:),phi(c,:));
+            m(c,j) = sum(w(j).*polyval(f1, x(j)));
+            
+            f2 =conv(phiPrim(j,:),phi(c,:));
+            l(c,j) = sum(w(j).*polyval(f2, x(j)));
+            
+            f3 =conv(phiPrim(j,:),phiPrim(c,:));
+            k(c,j) = sum(w(j).*polyval(f3, x(j)));
+%             m(c,j) = diff(polyval(polyint(conv(phi(j,:),phi(c,:))),[a,b]));
+%             l(c,j) = diff(polyval(polyint(conv(phiPrim(j,:),phi(c,:))),[a,b]));
+%             k(c,j) = diff(polyval(polyint(conv(phiPrim(j,:),phiPrim(c,:))),[a,b]));
         end
     end
     M(i:degree+i,i:degree+i) = M(i:degree+i,i:degree+i) + m;
@@ -42,24 +50,31 @@ for i = 1:degree:length(M)-degree % Assemble FEM matrixes
 end
 
 
-% mo
-%phi = coeff2(degree,[x(i+degree:end); 1]); % generate coefficients of basis functions
-phi = hermite_rec(degree);
-%
+
+phi = coeff2(degree,[x(i+degree:end); 1]); % generate coefficients of basis functions
 phiPrim = zeros(degree+1,degree);% vi forlorar en kolumn pga derivering
-% mo% for j=1:degree+1 % differentiate basis functions
-for j=1:degree
+for j=1:degree+1 % differentiate basis functions
     phiPrim(j,:) = polyder(phi(j,:));
 end
 a = x(i+degree);
 b = 1;
-%mo% for j = 1:degree+1
-%     for c = 1:degree+1
-for j = 1:degree
-    for c = 1:degree
-        m(c,j) = diff(polyval(polyint(conv(phi(j,:),phi(c,:))),[a,b]));
-        l(c,j) = diff(polyval(polyint(conv(phiPrim(j,:),phi(c,:))),[a,b]));
-        k(c,j) = diff(polyval(polyint(conv(phiPrim(j,:),phiPrim(c,:))),[a,b]));
+x(i)= (b-a)/2 * x(i) +(b +a)/2;
+w(i)= w(i)*((b-a)/2); % according to what Gunilla said
+%     x=flip(x);
+%     x = x(1:end-1);
+for j = 1:degree+1
+    for c = 1:degree+1
+        f1 =conv(phi(j,:),phi(c,:));
+        m(c,j) = sum(w(j).*polyval(f1, x(j)));
+            
+        f2 =conv(phiPrim(j,:),phi(c,:));
+        l(c,j) = sum(w(j).*polyval(f2, x(j)));
+            
+        f3 =conv(phiPrim(j,:),phiPrim(c,:));
+        k(c,j) = sum(w(j).*polyval(f3, x(j)));
+%         m(c,j) = diff(polyval(polyint(conv(phi(j,:),phi(c,:))),[a,b]));
+%         l(c,j) = diff(polyval(polyint(conv(phiPrim(j,:),phi(c,:))),[a,b]));
+%         k(c,j) = diff(polyval(polyint(conv(phiPrim(j,:),phiPrim(c,:))),[a,b]));
     end
 end
 
