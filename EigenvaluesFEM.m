@@ -4,20 +4,14 @@ close all;
 clc;
 left = 0; % boundaries
 right = 1;
-m = 60; % number of spatial points has to be dividable evenly by degree
-u0 = zeros([m,1]);
-x = zeros([m,1]);
-h = (right-left)/(m);
-plotting = 1; % s??tt till 1 om du vill plotta
 
-%% Evenly spaced interpolation points or Gauss-Lobatto interpolation points
-for i = 1:m % evenly spaced points
-   x(i) = h*(i-1);
-end
+%m = 60; % number of spatial points has to be dividable evenly by degree
+n=10;
+
+plotting = 1; % s??tt till 1 om du vill plotta
 
 % Gauss-Lobatto points: v??lj m+1 punkter och ta bort sista
 % [x,w]= legendre_gauss_lobatto(m+1);
-% % x= (right-left)/2 * x +(right -left)/2; % fel tror jag
 % x= (right-left)/2 * x +(right +left)/2;
 % w= w*((right-left)/2); % according to what Gunilla said
 % x=flip(x);
@@ -27,9 +21,7 @@ end
 u_0 = 1; % amplitude
 k = 2*pi; % wave frequency
 analytic = @(x,t) real(u_0*exp(1i*k*(x-t)));
-for i = 1:m
-    u0(i) = analytic(x(i),0);
-end
+
 
 %% Stability region of RK4 och RK1/explicit euler
 xi = -3:0.01:0.5;
@@ -40,10 +32,26 @@ stabRK4 = abs(1+z+1/2*z.^2+1/6*z.^3 + 1/24*z.^4);
 stabRK1 = abs(1+z);
 
 %m = (degree+1)+n*degree-1
-for degree = 1:6
+for degree = 1:18
+    % antal intervalinterval
+    m=degree*(n+1);
+    
+    u0 = zeros([m,1]);
+    x = zeros([m,1]);
+    h = (right-left)/(m);
+    
+    %% Evenly spaced interpolation points or Gauss-Lobatto interpolation points
+    for i = 1:m % evenly spaced points
+        x(i) = h*(i-1);
+    end
+    
+    for i = 1:m
+        u0(i) = analytic(x(i),0);
+    end
+    
     %% Assemble mass and stiffness matrix
     % For evenly spaced points (using or not using Masslumping)
-    [M,L,K] = integrate2(degree,x);
+    [M,L,K] = integrate(degree,h,n);
     % For Gauss-Lobatto points and Gauss-Lobatto quadrature
 % [M,L,K] = integrate2_GaussLobatto(degree,x,w);
     a = 0;
@@ -105,7 +113,7 @@ for degree = 1:6
     %% MAss lumping time stepping
     if plotting == 1
         u1 = u0;
-        dt = dtmax*0.9;
+        dt =  dtmax_Masslumping*0.9;
         T = 0;
         while T < 30
            g1 = dt * RK_Masslumping * u1; %% minus ??r inlaggt i RK = -M\(L+a*K)
@@ -138,7 +146,8 @@ for i= 1:6
     % the width of the interval
     width= 1;
     % total number of degrees of freedom % m/degree-1=antalet elements
-    N_dof = ( m/i-1)*i;
+    % N_dof = ( m/i-1)*i;
+    N_dof = m*i;
     C_eff(i) = (sqrt(3)*c*dt*N_dof)/width;
 end
 figure;

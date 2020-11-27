@@ -16,7 +16,8 @@ end
 %n = degree+1; % for the size of the matrixes
 m = zeros(degree+1);
 l = zeros(degree+1);
-M = zeros((degree+1)+n*degree-1);
+%M = zeros((degree+1)+n*degree-1);% samma sak som 
+M = zeros(degree*(n+1));% n+1:interval
 L = zeros((degree+1)+n*degree-1);
 K = zeros((degree+1)+n*degree-1);% lokal to global % slutade fraga har
 a = 0;

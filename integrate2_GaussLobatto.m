@@ -44,6 +44,7 @@ for i = 1:degree:length(M)-degree % Assemble FEM matrixes
 %             k(c,j) = diff(polyval(polyint(conv(phiPrim(j,:),phiPrim(c,:))),[a,b]));
         end
     end
+    %%%%%%%%%%%%%%%
     M(i:degree+i,i:degree+i) = M(i:degree+i,i:degree+i) + m;
     L(i:degree+i,i:degree+i) = L(i:degree+i,i:degree+i) + l;
     K(i:degree+i,i:degree+i) = K(i:degree+i,i:degree+i) + k;
