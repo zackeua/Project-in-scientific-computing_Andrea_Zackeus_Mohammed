@@ -1,6 +1,5 @@
 function [M,L,K] = integrate(degree,h,n)
 %  ha x vector ist?llet f?r h, h(i)=x(i)-x(i-1)
-
 % Integrates "exactly" P(degree) elements with a uniform spatial step length h and n nodal
 % points and assembles Mass (M), Load (L) and Stiffness (K) matrices.
 % assembly of FEM matrixes for equidistant grid
@@ -44,7 +43,7 @@ K(1,1) = K(1,1) + k(end,end);
 
 M(end-degree+1:end,end-degree+1:end) = M(end-degree+1:end,end-degree+1:end) + m(1:degree,1:degree);
 L(end-degree+1:end,end-degree+1:end) = L(end-degree+1:end,end-degree+1:end) + l(1:degree,1:degree);
-K(end-degree+1:end,end-degree+1:end) = k(end-degree+1:end,end-degree+1:end) + k(1:degree,1:degree);
+K(end-degree+1:end,end-degree+1:end) = K(end-degree+1:end,end-degree+1:end) + k(1:degree,1:degree);
 
 M(1,end-degree+1:end) = M(1,end-degree+1:end) + m(end,1:degree);
 L(1,end-degree+1:end) = L(1,end-degree+1:end) + l(end,1:degree);

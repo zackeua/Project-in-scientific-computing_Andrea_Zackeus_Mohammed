@@ -9,6 +9,7 @@ pts = length(x);
 %n = degree+1; % for the size of the matrixes
 m = zeros(degree+1);
 l = zeros(degree+1);
+k = zeros(degree+1);
 M = zeros(pts);
 L = zeros(pts);
 K = zeros(pts);% lokal to global % slutade fraga har
@@ -58,7 +59,7 @@ K(1,1) = K(1,1) + k(end,end);
 
 M(end-degree+1:end,end-degree+1:end) = M(end-degree+1:end,end-degree+1:end) + m(1:degree,1:degree);
 L(end-degree+1:end,end-degree+1:end) = L(end-degree+1:end,end-degree+1:end) + l(1:degree,1:degree);
-K(end-degree+1:end,end-degree+1:end) = k(end-degree+1:end,end-degree+1:end) + k(1:degree,1:degree);
+K(end-degree+1:end,end-degree+1:end) = K(end-degree+1:end,end-degree+1:end) + k(1:degree,1:degree);
 
 M(1,end-degree+1:end) = M(1,end-degree+1:end) + m(end,1:degree);
 L(1,end-degree+1:end) = L(1,end-degree+1:end) + l(end,1:degree);

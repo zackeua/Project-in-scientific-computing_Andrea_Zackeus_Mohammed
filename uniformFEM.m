@@ -42,22 +42,10 @@ for degree = 1:8
     % antal intervalinterval
     m=degree*(n+1);
     
-    u0 = zeros([m,1]);
-    x = zeros([m,1]);
-    h = (right-left)/(m);
-    
-    %% Evenly spaced interpolation points or Gauss-Lobatto interpolation points
-    for i = 1:m % evenly spaced points
-        x(i) = h*(i-1);
-    end
-    
-    for i = 1:m
-        u0(i) = analytic(x(i),0);
-    end
-    
     %% Assemble mass and stiffness matrix
     % For evenly spaced points (using or not using Masslumping)
-    [M,L,K] = integrate(degree,h,n);
+    [M,L,K,X] = MatrixAssembler(degree,n,1);
+    u0 = analytic(X,0);
     % For Gauss-Lobatto points and Gauss-Lobatto quadrature
     % [M,L,K] = integrate2_GaussLobatto(degree,x,w);
     a = 0;

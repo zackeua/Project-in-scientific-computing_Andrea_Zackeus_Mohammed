@@ -6,15 +6,11 @@ left = 0; % boundaries
 right = 1;
 
 %m = 60; % number of spatial points has to be dividable evenly by degree
-n=30;
+n=10;
 
+C_eff = [];
 
 plotting = 1; % s??tt till 1 om du vill plotta
-
-%% Evenly spaced interpolation points or Gauss-Lobatto interpolation points
-for i = 1:m % evenly spaced points
-   x(i) = h*(i-1);
-end
 
 % Gauss-Lobatto points: v??lj m+1 punkter och ta bort sista
 % [x,w]= legendre_gauss_lobatto(m+1);
@@ -27,9 +23,7 @@ end
 u_0 = 1; % amplitude
 k = 2*pi; % wave frequency
 analytic = @(x,t) real(u_0*exp(1i*k*(x-t)));
-for i = 1:m
-    u0(i) = analytic(x(i),0);
-end
+
 
 %% Stability region of RK4 och RK1/explicit euler
 xi = -3:0.01:0.5;
@@ -40,19 +34,33 @@ stabRK4 = abs(1+z+1/2*z.^2+1/6*z.^3 + 1/24*z.^4);
 stabRK1 = abs(1+z);
 
 %m = (degree+1)+n*degree-1
-for degree = 1:6
+for degree = 1:18
     % antal intervalinterval
     m=degree*(n+1);
     
+    u0 = zeros([m,1]);
+    x = zeros([m,1]);
+    h = (right-left)/(m);
+    
+    %% Evenly spaced interpolation points or Gauss-Lobatto interpolation points
+    for i = 1:m % evenly spaced points
+        x(i) = h*(i-1);
+    end
+    
+    for i = 1:m
+        u0(i) = analytic(x(i),0);
+    end
+    
     %% Assemble mass and stiffness matrix
     % For evenly spaced points (using or not using Masslumping)
-    [M,L,K] = integrate2(degree,x);
+    [M,L,K] = integrate(degree,h,n);
     % For Gauss-Lobatto points and Gauss-Lobatto quadrature
-% [M,L,K] = integrate2_GaussLobatto(degree,x,w);
+    % [M,L,K] = integrate2_GaussLobatto(degree,x,w);
     a = 0;
     %a = h/2000;
     RK = -M\(L+a*K);
     RK_Masslumping = -(eye(m).*sum(M))\(L+a*K);
+    
 
     ei = eig(RK);
     ei_Masslumping = eig(RK_Masslumping);
@@ -63,6 +71,8 @@ for degree = 1:6
     eimax = max(abs(ei_Masslumping));
     dtmax_Masslumping = 2.83/eimax;
     
+    
+    C_eff = [C_eff sqrt(3)*dtmax*m]; % calculate next C_eff number only
     
     disp(['Order ', num2str(degree), ' biggest possible timestep ', num2str(dtmax)])
     disp(['Order ', num2str(degree), ' with masslumping biggest possible timestep ', num2str(dtmax_Masslumping)])
@@ -132,21 +142,15 @@ for degree = 1:6
   
 end
 %% The rescaled efficiency number
-degree = 1:6;
-C_eff= zeros(1,6);
-for i= 1:6
-    % the wave number
-    c= 1; % not sure if it should be equal to one??
-%     c=2*pi;
-    % the width of the interval
-    width= 1;
-    % total number of degrees of freedom % m/degree-1=antalet elements
-    % N_dof = ( m/i-1)*i;
-    N_dof = m*i;
-    C_eff(i) = (sqrt(3)*c*dt*N_dof)/width;
-end
+
 figure;
-plot(degree,C_eff,'-*','MarkerIndices',1:length(C_eff) );
+plot(C_eff,'-*','MarkerIndices',1:length(C_eff));
 xlabel('Polynomial degree');
 ylabel('Rescaled C_{eff}');
 title('Rescaled efficiency number as a function of the polynomial degree  ')
+
+figure;
+plot(1/C_eff,'-*','MarkerIndices',1:length(C_eff));
+xlabel('Polynomial degree');
+ylabel('Rescaled C_{eff}');
+title('Rescaled efficiency number as a function of the polynomial degree');

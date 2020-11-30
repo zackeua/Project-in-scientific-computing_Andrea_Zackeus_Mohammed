@@ -42,24 +42,11 @@ for degree = 1:8
     % antal intervalinterval
     m=degree*(n+1);
     
-    u0 = zeros([m,1]);
-    x = zeros([m,1]);
-    h = (right-left)/(m);
-    
-    %% Evenly spaced interpolation points or Gauss-Lobatto interpolation points
-    for i = 1:m % evenly spaced points
-        x(i) = h*(i-1);
-    end
-    
-    for i = 1:m
-        u0(i) = analytic(x(i),0);
-    end
-    
     %% Assemble mass and stiffness matrix
-    % For evenly spaced points (using or not using Masslumping)
-    [M,L,K] = integrate(degree,h,n);
-    % For Gauss-Lobatto points and Gauss-Lobatto quadrature
-    % [M,L,K] = integrate2_GaussLobatto(degree,x,w);
+    
+    [M,L,K,X] = MatrixAssembler(degree,n,3);
+    u0 = analytic(X,0);
+    
     a = 0;
     %a = h/2000;
     RK = -M\(L+a*K);
@@ -119,31 +106,6 @@ for degree = 1:8
         legend('analytic','RK4',"Location","best");
         title(['T = ', num2str(T), ', with P', num2str(degree), ' elements and timestep: ', num2str(dt)])
     end
-    
-    %% MAss lumping time stepping
-    if plotting == 1
-        u1 = u0;
-        dt =  dtmax_Masslumping*0.9;
-        T = 0;
-        while T < 30
-           g1 = dt * RK_Masslumping * u1; %% minus ??r inlaggt i RK = -M\(L+a*K)
-           g2 = dt * RK_Masslumping * (u1 + g1/2);
-           g3 = dt * RK_Masslumping * (u1 + g2/2);
-           g4 = dt * RK_Masslumping * (u1 + g3);
-           u1 = u1 + (g1 + 2*g2 + 2*g3 + g4)/6;
-           T = T + dt;
-        end
-    
-        figure;
-        plot([x; 1],[analytic(x,T); analytic(x(1),T)],[x; 1], [u1; u1(1)]);
-        legend('analytic','RK4',"Location","best");
-        title(['T = ', num2str(T), ', with P', num2str(degree), ' elements and timestep: ', num2str(dt), ' with masslumping'])
-    end
-    
-    
-    
-    %e = analytic(x,T) - u1;
-    %E = norm(e'*e);
 end
 %% The rescaled efficiency number
 if plot_C_eff == 1
