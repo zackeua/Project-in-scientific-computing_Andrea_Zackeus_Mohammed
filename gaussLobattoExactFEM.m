@@ -10,9 +10,9 @@ n=10;
 
 C_eff = [];
 
-plotting = 0; % s??tt till 1 om du vill plotta
+plotting = 1; % s??tt till 1 om du vill plotta
 
-plot_eigenvalues = 0; % välj vad du vill plotta och skriva ut
+plot_eigenvalues = 0; % v??lj vad du vill plotta och skriva ut
 plot_C_eff = 1;
 disp_max_timesteps = 1;
 
@@ -102,7 +102,7 @@ for degree = 1:8
         end
     
         figure;
-        plot([x; 1],[analytic(x,T); analytic(x(1),T)],[x; 1], [u1; u1(1)]);
+        plot([X; 1],[analytic(X,T); analytic(X(1),T)],[X; 1], [u1; u1(1)]);
         legend('analytic','RK4',"Location","best");
         title(['T = ', num2str(T), ', with P', num2str(degree), ' elements and timestep: ', num2str(dt)])
     end

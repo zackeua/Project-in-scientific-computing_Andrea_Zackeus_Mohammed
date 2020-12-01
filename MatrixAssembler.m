@@ -15,8 +15,8 @@ K = zeros(degree*(n+1));
 phiPrim = zeros(degree+1,degree);
 
 if mode==1
-    X = 0:1/n:1;
-    phi = coeff2(degree,X(1):X(2)/degree:X(2));
+    X = 0:1/n:1;% 1/n mellan 2 interval
+    phi = coeff2(degree,X(1):X(2)/degree:X(2));% X(1):X(2)/degree:X(2) interval
 end
 
 if mode==2

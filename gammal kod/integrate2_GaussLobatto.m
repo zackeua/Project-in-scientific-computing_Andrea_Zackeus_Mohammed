@@ -1,3 +1,5 @@
+%%%%%%%%%%%%%%%%%%%%%koden beh?vs inte l?ngre
+
 function [M,L,K] = integrate2_GaussLobatto(degree,x,w)
 % x: Gauss Lobatto points
 % w: the Gauss Lobatto weights
