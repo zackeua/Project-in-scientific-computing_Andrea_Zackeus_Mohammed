@@ -10,10 +10,10 @@ n=10;
 
 C_eff = [];
 
-plotting = 0; % s??tt till 1 om du vill plotta
+plotting = 1; % s??tt till 1 om du vill plotta
 
 plot_eigenvalues = 0; % välj vad du vill plotta och skriva ut
-plot_C_eff = 1;
+plot_C_eff = 0;
 disp_max_timesteps = 1;
 
 % Gauss-Lobatto points: v??lj m+1 punkter och ta bort sista
@@ -47,27 +47,25 @@ for degree = 1:8
     [M,L,K,X] = MatrixAssembler(degree,n,2);
     u0 = analytic(X,0);
     
-    a = 0;
+    h_vec = [X(2:end); 1] - X;
+    h = min(h_vec);
+    a = 0; %h*h;
     %a = h/2000;
     RK = -M\(L+a*K);
-    RK_Masslumping = -(eye(m).*sum(M))\(L+a*K);
+    %RK_Masslumping = -(eye(m).*sum(M))\(L+a*K);
     
 
     ei = eig(RK);
-    ei_Masslumping = eig(RK_Masslumping);
     
-    eimax = max(abs(ei));
+    eimax = max(imag(ei));
     dtmax = 2.83/eimax;
     
-    eimax = max(abs(ei_Masslumping));
-    dtmax_Masslumping = 2.83/eimax;
     
     
     C_eff = [C_eff sqrt(3)*dtmax*m]; % calculate next C_eff number only
     
     if disp_max_timesteps == 1
         disp(['Order ', num2str(degree), ' biggest possible timestep ', num2str(dtmax)])
-        disp(['Order ', num2str(degree), ' with masslumping biggest possible timestep ', num2str(dtmax_Masslumping)])
     end
     
     if plot_eigenvalues == 1
@@ -76,14 +74,13 @@ for degree = 1:8
         hold on;
         contour(xi,yi,stabRK1,[1,1])
         plot(ei*dtmax,'*b');
-        plot(ei_Masslumping*dtmax_Masslumping,'+g');
         title(['Eigenvalues for P', num2str(degree),' elements'])
         xlabel('Re(\lambda)')
         ylabel('Im(\lambda)')
         ylim([-3 3]);
         xlim([-3 3]);
-        axis equal;
-        legend('RK4','explicit euler', '\lambda\cdot dt', '\lambda_{Masslumping}\cdot dt', 'Location','best')
+        %axis equal;
+        legend('RK4','explicit euler', '\lambda\cdot dt', 'Location','best')
         hold off;
     end
         
@@ -102,14 +99,13 @@ for degree = 1:8
         end
     
         figure;
-        plot([x; 1],[analytic(x,T); analytic(x(1),T)],[x; 1], [u1; u1(1)]);
+        plot([X; 1],[analytic(X,T); analytic(X(1),T)],[X; 1], [u1; u1(1)]);
         legend('analytic','RK4',"Location","best");
         title(['T = ', num2str(T), ', with P', num2str(degree), ' elements and timestep: ', num2str(dt)])
     end
 end
 %% The rescaled efficiency number
 if plot_C_eff == 1
-    C_eff = C_eff/C_eff(1);
     figure;
     plot(C_eff,'-*','MarkerIndices',1:length(C_eff));
     xlabel('Polynomial degree');
@@ -122,3 +118,5 @@ if plot_C_eff == 1
     ylabel('1/Rescaled C_{eff}');
     title('Rescaled efficiency number as a function of the polynomial degree');
 end
+
+save('gaussLobatto','C_eff');
