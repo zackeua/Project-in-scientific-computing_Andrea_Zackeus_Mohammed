@@ -10,7 +10,7 @@ n=10;
 
 C_eff = [];
 
-plotting = 1; % s??tt till 1 om du vill plotta
+plotting = 0; % s??tt till 1 om du vill plotta
 
 plot_eigenvalues = 0; % v??lj vad du vill plotta och skriva ut
 plot_C_eff = 1;
@@ -109,7 +109,6 @@ for degree = 1:8
 end
 %% The rescaled efficiency number
 if plot_C_eff == 1
-    C_eff = C_eff/C_eff(1);
     figure;
     plot(C_eff,'-*','MarkerIndices',1:length(C_eff));
     xlabel('Polynomial degree');
@@ -122,3 +121,5 @@ if plot_C_eff == 1
     ylabel('1/Rescaled C_{eff}');
     title('Rescaled efficiency number as a function of the polynomial degree');
 end
+
+save('gaussLobattoExact','C_eff');
