@@ -44,7 +44,10 @@ for degree = 1:8
     
     %% Assemble mass and stiffness matrix
     
-    [M,L,K,X] = MatrixAssembler(degree,n,2);
+%     [M,L,K,X] = MatrixAssembler(degree,n,1);%exact integ. with evenly spaced
+%     [M,L,K,X] = MatrixAssembler(degree,n,2); %Gauss lobatto integ. with
+%     %Gauss lobatto
+    [M,L,K,X] = MatrixAssembler(degree,n,3); %exact integ. Gaus lo points
     u0 = analytic(X,0);
     
     h_vec = [X(2:end); 1] - X;
