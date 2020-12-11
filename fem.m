@@ -123,13 +123,4 @@ if plot_C_eff == 1
     title('Rescaled efficiency number as a function of the polynomial degree');
 end
 
-if a == 0
-    save('uniform','C_eff');
-else
-    save('uniformStability','C_eff');
-end
-
-
-
-
 end

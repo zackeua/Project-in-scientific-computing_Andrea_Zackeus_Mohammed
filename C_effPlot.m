@@ -1,22 +1,24 @@
 close all;
 
-load('uniform');
-C_uni = C_eff;
+a = 0;
+degrees = 1:9;
+bounds = [0,1];
+n = 10;
+C_uni = fem(a,1,degrees,bounds,n);
 
-load('gaussLobatto');
-C_gaussLobatto = C_eff;
+C_gaussLobatto = fem(a,2,degrees,bounds,n);
 
-load('gaussLobattoExact');
-C_gaussLobattoExact = C_eff;
+C_gaussLobattoExact = fem(a,3,degrees,bounds,n);
+
 
 load('fdm');
 
 
 figure
-plot(C_uni,'-*','LineWidth',10);
+plot(degrees,C_uni,'-*','LineWidth',10);
 hold on;
-plot(C_gaussLobatto,'-*','LineWidth',10);
-plot(C_gaussLobattoExact,'-*','LineWidth',10);
+plot(degrees,C_gaussLobatto,'-*','LineWidth',10);
+plot(degrees,C_gaussLobattoExact,'-*','LineWidth',10);
 plot(2*(1:4),CFL,'-*','LineWidth',10);
 hold off;
 legend('Lagrangian FEM - evenly spaced points with exact integration', 'Lagrangian FEM - GL points with GL quadrature', 'Lagrangian FEM - GL points with exact integration', 'FDM - with central difference scheme');
