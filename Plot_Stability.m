@@ -7,25 +7,22 @@ x=linspace(-3,1.5,200);
 y=linspace(-3.5,3.5,200);
 
 [X,Y]=meshgrid(x,y);
-Z=X +Y*i;
+Z=X +Y*1i;
 %Euler's Method
 M=abs(1+Z);
-[c,h]=contour(X,Y,M,[1,1]);
-set(h,'linewidth',2,'edgecolor','b')
+contour(X,Y,M,[1,1],'r');
 hold on
 %Heun's Method
 M=abs(1+Z+Z.^2/2);
-[c,h]=contour(X,Y,M,[1,1]);
-set(h,'linewidth',2,'edgecolor','g')
+contour(X,Y,M,[1,1],'g');
 %RK4
 M=abs(1+Z+Z.^2/2+Z.^3/6+Z.^4/24);
-[c,h]=contour(X,Y,M,[1,1]);
-set(h,'linewidth',2,'edgecolor','r','lineStyle',':')
-
+contour(X,Y,M,[1,1],'b');
 grid on
 axis equal
 axis([-5 1 -3 3])
 title('Runge-Kutta A-Stability Regions')
-legend('Eulers Method', 'Heuns Method','RK4')
+legend('Eulers Method', 'Heuns Method','RK4', 'Location', 'northwest')
 xlabel('Re')
 ylabel('Im')
+set(gca,'FontSize',15);

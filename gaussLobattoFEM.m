@@ -52,7 +52,7 @@ for degree = 1:8
     
     h_vec = [X(2:end); 1] - X;
     h = min(h_vec);
-    a = 0; %h*h;
+    a = h*h;
     %a = h/2000;
     RK = -M\(L+a*K);
     %RK_Masslumping = -(eye(m).*sum(M))\(L+a*K);
@@ -121,5 +121,8 @@ if plot_C_eff == 1
     ylabel('1/Rescaled C_{eff}');
     title('Rescaled efficiency number as a function of the polynomial degree');
 end
-
-save('gaussLobatto','C_eff');
+if a == 0
+    save('gaussLobatto','C_eff');
+else
+    save('gaussLobattoStability','C_eff');
+end

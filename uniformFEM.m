@@ -10,9 +10,9 @@ n=10;
 
 C_eff = [];
 
-plotting = 1; % s??tt till 1 om du vill plotta
+plotting = 0; % s??tt till 1 om du vill plotta
 
-plot_eigenvalues = 0; % välj vad du vill plotta och skriva ut
+plot_eigenvalues = 1; % välj vad du vill plotta och skriva ut
 plot_C_eff = 1;
 disp_max_timesteps = 1;
 
@@ -38,7 +38,7 @@ stabRK4 = abs(1+z+1/2*z.^2+1/6*z.^3 + 1/24*z.^4);
 stabRK1 = abs(1+z);
 
 %m = (degree+1)+n*degree-1
-for degree = 1:8
+for degree = 1:16
     % antal intervalinterval
     m=degree*(n+1);
     
@@ -52,14 +52,14 @@ for degree = 1:8
     %h = X(2)-X(1);
     h_vec = [X(2:end); 1] - X;
     h = min(h_vec);
-    a = h*h; %h*h;
+    a = 1/h; %h*h;
     RK = -M\(L+a*K);
     
 
     ei = eig(RK);
      
     eimax = max(abs(ei));
-    dtmax = 2.83/eimax;
+    dtmax = 2.5/eimax;
     
     C_eff = [C_eff sqrt(3)*dtmax*m]; % calculate next C_eff number only
     
@@ -119,4 +119,8 @@ if plot_C_eff == 1
     title('Rescaled efficiency number as a function of the polynomial degree');
 end
 
-save('uniform','C_eff');
+if a == 0
+    save('uniform','C_eff');
+else
+    save('uniformStability','C_eff');
+end
