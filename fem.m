@@ -1,12 +1,16 @@
-%% Setup
-clear;
-close all;
-clc;
-left = 0; % boundaries
-right = 1;
+function C_eff = fem(a,choice,degrees,bounds,intervals)
+% a is stabilisation term in the equation u_t + u_x = a*u_xx
+% choice represents, 1=uniform, 2=gauss lobatto quadrature, 3=GL with exact
+% integration
+% degrees is a vector of degrees of intrest
+% bounds is [left, right] bounds of domain, i.e. [0,1]
+% intervals is the number of intervals to split the domain into
+%setup
+left = bounds(1); % boundaries
+right = bounds(2);
 
 %m = 60; % number of spatial points has to be dividable evenly by degree
-n=10;
+n=intervals;
 
 C_eff = [];
 
@@ -44,17 +48,17 @@ for degree = degrees
     
     %% Assemble mass and stiffness matrix
     % For evenly spaced points (using or not using Masslumping)
-    [M,L,K,X] = MatrixAssembler(degree,n,1);
+    [M,L,K,X] = MatrixAssembler(degree,n,choice,bounds);
     u0 = analytic(X,0);
     % For Gauss-Lobatto points and Gauss-Lobatto quadrature
     % [M,L,K] = integrate2_GaussLobatto(degree,x,w);
     %a = 0;
     %h = X(2)-X(1);
-    h_vec = [X(2:end); 1] - X;
-    h = min(h_vec);
-    a = 0; %h*h;
-    RK = M\(a*K-L);
+    h_vec = [X(2:end); right] - X;
+    %h = min(h_vec);
     
+    %a = h; %h*h;
+    RK = M\(-a*K-L);
 
     ei = eig(RK);
      
@@ -98,7 +102,7 @@ for degree = degrees
         end
     
         figure;
-        plot([X; 1],[analytic(X,T); analytic(X(1),T)],[X; 1], [u1; u1(1)]);
+        plot([X; right],[analytic(X,T); analytic(X(1),T)],[X; right], [u1; u1(1)]);
         legend('analytic','RK4',"Location","best");
         title(['T = ', num2str(T), ', with P', num2str(degree), ' elements and timestep: ', num2str(dt)])
     end
@@ -123,4 +127,9 @@ if a == 0
     save('uniform','C_eff');
 else
     save('uniformStability','C_eff');
+end
+
+
+
+
 end

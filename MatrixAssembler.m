@@ -1,4 +1,4 @@
-function [M,L,K,X] = MatrixAssembler(degree,n,mode)
+function [M,L,K,X] = MatrixAssembler(degree,n,mode,bounds)
 % degree is degree of polynomials,
 % n is the number of intervals
 % mode is the type of matrix assembly
@@ -15,14 +15,14 @@ K = zeros(degree*(n+1));
 phiPrim = zeros(degree+1,degree);
 
 if mode==1
-    X = 0:1/n:1;% 1/n mellan 2 interval
+    X = bounds(1):bounds(2)/n:bounds(2);% 1/n mellan 2 interval
     phi = coeff2(degree,X(1):X(2)/degree:X(2));% X(1):X(2)/degree:X(2) interval
 end
 
 if mode==2
     [X,W]= legendre_gauss_lobatto(degree+1);
-    right = 1/(n+1);
-    left = 0;
+    right = bounds(2)/(n+1);
+    left = bounds(1);
     X = (right-left)/2 * X +(right + left)/2;
     X = flip(X);
     W  = W*(right-left)/2;
@@ -31,8 +31,8 @@ end
 
 if mode==3
     [X,W]= legendre_gauss_lobatto(degree+1);
-    right = 1/(n+1);
-    left = 0;
+    right = bounds(2)/(n+1);
+    left = bounds(1);
     X = (right-left)/2 * X +(right + left)/2;
     X = flip(X);
     W  = W*(right-left)/2;
@@ -55,7 +55,7 @@ if mode==1
     for i = 1:degree*(n+1)
         X(i) = h*(i-1);
     end
-    X = linspace(0,1,degree*(n+1)+1);
+    X = linspace(bounds(1),bounds(2),degree*(n+1)+1);
     X = X(1:end-1)';
 
     for j = 1:degree+1

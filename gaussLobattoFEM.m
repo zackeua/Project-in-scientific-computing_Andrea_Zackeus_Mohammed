@@ -5,8 +5,7 @@ clc;
 left = 0; % boundaries
 right = 1;
 
-%m = 60; % number of spatial points has to be dividable evenly by degree
-n=10;
+%m = 60; % number of spatial points has to be dividable evenly by degree1n=10;
 
 C_eff = [];
 
@@ -50,7 +49,7 @@ for degree = 1:8
     [M,L,K,X] = MatrixAssembler(degree,n,3); %exact integ. Gaus lo points
     u0 = analytic(X,0);
     
-    h_vec = [X(2:end); 1] - X;
+    h_vec = [X(2:end); 2] - X;
     h = min(h_vec);
     a = h*h;
     %a = h/2000;
