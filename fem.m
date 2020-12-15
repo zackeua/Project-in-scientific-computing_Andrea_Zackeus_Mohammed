@@ -1,4 +1,4 @@
-function C_eff = fem(a,choice,degrees,bounds,intervals)
+function [C_eff,L] = fem(a,choice,degrees,bounds,intervals)
 % a is stabilisation term in the equation u_t + u_x = a*u_xx
 % choice represents, 1=uniform, 2=gauss lobatto quadrature, 3=GL with exact
 % integration
@@ -17,8 +17,8 @@ C_eff = [];
 plotting = 0; % s??tt till 1 om du vill plotta
 
 plot_eigenvalues = 1; % välj vad du vill plotta och skriva ut
-plot_C_eff = 1;
-disp_max_timesteps = 1;
+plot_C_eff = 0;
+disp_max_timesteps = 0;
 
 % Gauss-Lobatto points: v??lj m+1 punkter och ta bort sista
 % [x,w]= legendre_gauss_lobatto(m+1);
@@ -54,6 +54,8 @@ for degree = degrees
     % [M,L,K] = integrate2_GaussLobatto(degree,x,w);
     %a = 0;
     %h = X(2)-X(1);
+    %L(1:degree,1:degree)
+    %K(1:degree,1:degree)
     h_vec = [X(2:end); right] - X;
     %h = min(h_vec);
     
@@ -86,22 +88,26 @@ for degree = degrees
         legend('RK4','explicit euler', '\lambda\cdot dt', 'Location','best')
         hold off;
     end
-        
     %% w/o masslumping timestepping
     if plotting == 1
+        %pause;
         u1 = u0;
-        dt = dtmax*0.9;
+        dt = dtmax*0.9*0.1;
         T = 0;
-        while T < 30
+        figure;
+        while T < 1
            g1 = dt * RK * u1; %% minus ??r inlaggt i RK = -M\(L+a*K)
            g2 = dt * RK * (u1 + g1/2);
            g3 = dt * RK * (u1 + g2/2);
            g4 = dt * RK * (u1 + g3);
            u1 = u1 + (g1 + 2*g2 + 2*g3 + g4)/6;
            T = T + dt;
+           plot([X; right],[analytic(X,T); analytic(X(1),T)],[X; right], [u1; u1(1)]);
+        legend('analytic','RK4',"Location","best");
+        title(['T = ', num2str(T), ', with P', num2str(degree), ' elements and timestep: ', num2str(dt)])
+        pause(0.01)
         end
-    
-        figure;
+        
         plot([X; right],[analytic(X,T); analytic(X(1),T)],[X; right], [u1; u1(1)]);
         legend('analytic','RK4',"Location","best");
         title(['T = ', num2str(T), ', with P', num2str(degree), ' elements and timestep: ', num2str(dt)])

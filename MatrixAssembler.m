@@ -1,4 +1,4 @@
-function [M,L,K,X] = MatrixAssembler(degree,n,mode,bounds)
+function [M,L,K,X,local_L] = MatrixAssembler(degree,n,mode,bounds)
 % degree is degree of polynomials,
 % n is the number of intervals
 % mode is the type of matrix assembly
@@ -50,7 +50,7 @@ if mode==1
     a = X(1);
     b = X(2);
 
-    h = 1/degree/(n+1);
+    h = (X(2)-X(1))/degree/(n+1);
     X = zeros(degree*(n+1),1);
     for i = 1:degree*(n+1)
         X(i) = h*(i-1);
@@ -58,6 +58,7 @@ if mode==1
     X = linspace(bounds(1),bounds(2),degree*(n+1)+1);
     X = X(1:end-1)';
 
+    %{
     for j = 1:degree+1
         for i = 1:degree+1
             local_M(i,j) = diff(polyval(polyint(conv(phi(j,:),phi(i,:))),[a,b]));
@@ -65,9 +66,25 @@ if mode==1
             local_K(i,j) = diff(polyval(polyint(conv(phiPrim(j,:),phiPrim(i,:))),[a,b]));
         end
     end
+    %}
+    for j = 1:degree+1
+        for i = j:degree+1
+            local_M(i,j) = diff(polyval(polyint(conv(phi(j,:),phi(i,:))),[a,b]));
+            local_M(j,i) = local_M(i,j);
+            local_K(i,j) = diff(polyval(polyint(conv(phiPrim(j,:),phiPrim(i,:))),[a,b]));
+            local_K(j,i) = local_K(i,j);
+            local_L(i,j) = diff(polyval(polyint(conv(phiPrim(j,:),phi(i,:))),[a,b]));
+            local_L(j,i) = -local_L(i,j);
+            if i == j
+                local_L(i,i) = 0;
+            end
+        end
+    end
+    
 end
 
 if mode==2
+    %{
     for j = 1:degree+1
         for i = 1:degree+1
             f1 = conv(phi(j,:),phi(i,:));
@@ -84,6 +101,29 @@ if mode==2
             
         end
     end
+    %}
+    for j = 1:degree+1
+        for i = j:degre+1
+            f1 = conv(phi(j,:),phi(i,:));
+            f1x = polyval(f1,X);
+            local_M(i,j) = W'*f1x;
+            local_M(j,i) = local_M(i,j);
+            
+            f2 = conv(phiPrim(j,:),phi(i,:));
+            f2x = polyval(f2,X);
+            local_L(i,j) = W'*f2x;
+            local_L(j,i) = -local_L(i,j);
+            if i == j
+                local_L(i,i) = 0;
+            end
+            
+            f3 = conv(phiPrim(j,:),phiPrim(i,:));
+            f3x = polyval(f3,X);
+            local_K(i,j) = W'*f3x;
+            local_K(j,i) = local_K(i,j);
+        end
+    end
+    
     Xout = X;
     for i = 1:n
         Xout = [Xout; Xout(end) + X(2:end)];
@@ -95,12 +135,26 @@ end
 if mode==3
     a = X(1);
     b = X(end);
-    
+    %{
     for j = 1:degree+1
         for i = 1:degree+1
             local_M(i,j) = diff(polyval(polyint(conv(phi(j,:),phi(i,:))),[a,b]));
             local_L(i,j) = diff(polyval(polyint(conv(phiPrim(j,:),phi(i,:))),[a,b]));
             local_K(i,j) = diff(polyval(polyint(conv(phiPrim(j,:),phiPrim(i,:))),[a,b]));
+        end
+    end
+    %}
+    for j = 1:degree+1
+        for i = j:degree+1
+            local_M(i,j) = diff(polyval(polyint(conv(phi(j,:),phi(i,:))),[a,b]));
+            local_M(j,i) = local_M(i,j);
+            local_K(i,j) = diff(polyval(polyint(conv(phiPrim(j,:),phiPrim(i,:))),[a,b]));
+            local_K(j,i) = local_K(i,j);
+            local_L(i,j) = diff(polyval(polyint(conv(phiPrim(j,:),phi(i,:))),[a,b]));
+            local_L(j,i) = -local_L(i,j);
+            if i == j
+                local_L(i,i) = 0;
+            end
         end
     end
     Xout = X;

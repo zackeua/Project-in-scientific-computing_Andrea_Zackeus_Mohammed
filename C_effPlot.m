@@ -1,7 +1,7 @@
 close all;
 
 a = 0;
-degrees = 1:9;
+degrees = 1:10;
 bounds = [0,1];
 n = 10;
 C_uni = fem(a,1,degrees,bounds,n);

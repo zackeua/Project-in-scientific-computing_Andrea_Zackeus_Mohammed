@@ -6,7 +6,6 @@ function c = coeff2(degree,x)
     given degree and step length, h.
     %}
     A = zeros(degree+1);% matris of coeff, = antalet punkter=degree+1
-
     for i = 1:degree+1 % varje kolonn (i) "bakifr??n" i matris A motsvarar x^degree
         A(:,i) = x.^(degree-i+1);
     end
