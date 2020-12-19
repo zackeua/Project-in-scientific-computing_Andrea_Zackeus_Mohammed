@@ -14,9 +14,9 @@ n=intervals;
 
 C_eff = [];
 
-plotting = 0; % s??tt till 1 om du vill plotta
+plotting = 1; % s??tt till 1 om du vill plotta
 
-plot_eigenvalues = 1; % välj vad du vill plotta och skriva ut
+plot_eigenvalues = 1; % v??lj vad du vill plotta och skriva ut
 plot_C_eff = 0;
 disp_max_timesteps = 0;
 

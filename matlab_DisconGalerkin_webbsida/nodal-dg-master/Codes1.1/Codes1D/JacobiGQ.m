@@ -1,5 +1,5 @@
 function [x,w] = JacobiGQ(alpha,beta,N);
-
+% (from ch 3) and it is used to compute the local solution by Gaussian quadrature 
 % function [x,w] = JacobiGQ(alpha,beta,N)
 % Purpose: Compute the N'th order Gauss quadrature points, x, 
 %          and weights, w, associated with the Jacobi 

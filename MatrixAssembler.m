@@ -103,7 +103,7 @@ if mode==2
     end
     %}
     for j = 1:degree+1
-        for i = j:degre+1
+        for i = j:degree+1
             f1 = conv(phi(j,:),phi(i,:));
             f1x = polyval(f1,X);
             local_M(i,j) = W'*f1x;

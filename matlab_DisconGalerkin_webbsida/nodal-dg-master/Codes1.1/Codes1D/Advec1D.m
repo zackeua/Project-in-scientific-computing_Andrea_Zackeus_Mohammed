@@ -1,5 +1,6 @@
 function [u] = Advec1D(u, FinalTime, a, alpha)
-% Purpose : Integrate 1D advection until FinalTime starting with
+% Purpose : Integrate 1D advection using a
+% low-storage RK4 method  until FinalTime starting with
 % initial the condition, u
 Globals1D;
 
@@ -24,6 +25,6 @@ for tstep=1:Nsteps
 % Increment time
 time = time+dt;
 % Plot solution
-plot(x,u); drawnow;
+plot(x,u); drawnow;%yticks(-1:0.2:1);
 end;
 return

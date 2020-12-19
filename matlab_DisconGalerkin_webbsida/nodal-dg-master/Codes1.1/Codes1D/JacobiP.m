@@ -1,4 +1,8 @@
 function [P] = JacobiP(x,alpha,beta,N);
+% when using modal representation of the local solution and using the
+% monomial basis,one gets a poorly conditioned mass matrix, thats why we
+% use here(with jacobi polynomial) an orthonormal basis to solve the problem of ill 
+% conditioned mass matrix(from ch 3). 
 
 % function [P] = JacobiP(x,alpha,beta,N)
 % Purpose: Evaluate Jacobi Polynomial of type (alpha,beta) > -1
