@@ -49,6 +49,8 @@ for degree = degrees
     %% Assemble mass and stiffness matrix
     % For evenly spaced points (using or not using Masslumping)
     [M,L,K,X] = MatrixAssembler(degree,n,choice,bounds);
+    M
+    disp(['condition number of M is ', num2str(cond(M))])
     u0 = analytic(X,0);
     % For Gauss-Lobatto points and Gauss-Lobatto quadrature
     % [M,L,K] = integrate2_GaussLobatto(degree,x,w);

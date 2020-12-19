@@ -4,6 +4,16 @@ function [M,L,K,X,local_L] = MatrixAssembler(degree,n,mode,bounds)
 % mode is the type of matrix assembly
 % 1 = exact integration, 2=gauss lobatto integration
 
+%% MOMO fels?kte problemet med stabilization f?r h?gre ordning 
+% Nv = degree+1; % nr of points
+% 
+% % Generate node coordinates
+% VX = (1:Nv);
+% for i = 1:Nv
+%   VX(i) = (bounds(2)-bounds(1))*(i-1)/(Nv-1) + bounds(1); % gives 0, 0.2, 0.4...
+% end
+% %%%
+
 local_M = zeros(degree+1);
 local_L = zeros(degree+1);
 local_K = zeros(degree+1);
@@ -13,10 +23,12 @@ L = zeros(degree*(n+1));
 K = zeros(degree*(n+1));
 
 phiPrim = zeros(degree+1,degree);
-
+%X = (0:degree) * h;
 if mode==1
     X = bounds(1):bounds(2)/n:bounds(2);% 1/n mellan 2 interval
     phi = coeff2(degree,X(1):X(2)/degree:X(2));% X(1):X(2)/degree:X(2) interval
+    %phi = coeff2(degree,(0:degree) *(X(1)-X(2)) );% X(1):X(2)/degree:X(2) interval
+    %phi = coeff2(degree,VX);
 end
 
 if mode==2

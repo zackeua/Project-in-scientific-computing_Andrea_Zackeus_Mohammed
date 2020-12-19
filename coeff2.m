@@ -1,5 +1,6 @@
 function c = coeff2(degree,x)
-% FEM    
+% FEM  
+%x vector
 %{
     Function to calculate coefficients to
     lagrange basis functions for a
