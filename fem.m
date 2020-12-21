@@ -48,8 +48,8 @@ for degree = degrees
     
     %% Assemble mass and stiffness matrix
     % For evenly spaced points (using or not using Masslumping)
-    [M,L,K,X] = MatrixAssembler(degree,n,choice,bounds);
-    M
+    [M,L,K,X] = MatrixAssembler2(degree,n,choice,bounds);
+    
     disp(['condition number of M is ', num2str(cond(M))])
     disp(['condition number of L is ', num2str(cond(L))])
     disp(['condition number of K is ', num2str(cond(K))])
