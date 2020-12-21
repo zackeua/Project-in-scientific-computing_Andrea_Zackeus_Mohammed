@@ -1,4 +1,4 @@
-function [C_eff,L] = fem(a,choice,degrees,bounds,intervals)
+function [C_eff,ei] = fem2(a,choice,degrees,bounds,intervals)
 % a is stabilisation term in the equation u_t + u_x = a*u_xx
 % choice represents, 1=uniform, 2=gauss lobatto quadrature, 3=GL with exact
 % integration
@@ -14,9 +14,9 @@ n=intervals;
 
 C_eff = [];
 
-plotting = 0; % s??tt till 1 om du vill plotta
+plotting = 1; % s??tt till 1 om du vill plotta
 
-plot_eigenvalues = 0; % v??lj vad du vill plotta och skriva ut
+plot_eigenvalues = 1; % v??lj vad du vill plotta och skriva ut
 plot_C_eff = 0;
 disp_max_timesteps = 0;
 
@@ -61,15 +61,25 @@ for degree = degrees
     %L(1:degree,1:degree)
     %K(1:degree,1:degree)
     h_vec = [X(2:end); right] - X;
-    %h = min(h_vec);
-    
-    %a = h; %h*h;
+    h = min(h_vec);
+    if (a == '0')
+        a = 0;
+    elseif (a=='1')
+        a = h; %h*h;
+    elseif (a=='2')
+        a = h*h;
+    else
+        a = a;
+    end
     RK = M\(-a*K-L);
-    
+
     ei = eig(RK);
-     
-    eimax = max(abs(ei));
-    dtmax = 2.5/eimax;
+    
+    dtmax = 1;
+    
+    while (max(abs(1+ei*dtmax)) > 1)
+        dtmax = dtmax/2;
+    end
     
     C_eff = [C_eff sqrt(3)*dtmax*m]; % calculate next C_eff number only
     
@@ -96,24 +106,20 @@ for degree = degrees
     if plotting == 1
         %pause;
         u1 = u0;
-        dt = dtmax*0.9*0.1;
+        dt = dtmax*0.9;
         T = 0;
         figure;
         while T < 1
-           g1 = dt * RK * u1; %% minus ??r inlaggt i RK = -M\(L+a*K)
-           g2 = dt * RK * (u1 + g1/2);
-           g3 = dt * RK * (u1 + g2/2);
-           g4 = dt * RK * (u1 + g3);
-           u1 = u1 + (g1 + 2*g2 + 2*g3 + g4)/6;
+           u1 = u1 + dt * RK * u1; %% minus ??r inlaggt i RK = -M\(L+a*K)
            T = T + dt;
            plot([X; right],[analytic(X,T); analytic(X(1),T)],[X; right], [u1; u1(1)]);
-        legend('analytic','RK4',"Location","best");
-        title(['T = ', num2str(T), ', with P', num2str(degree), ' elements and timestep: ', num2str(dt)])
-        pause(0.01)
+           legend('analytic','explicit euler',"Location","best");
+           title(['T = ', num2str(T), ', with P', num2str(degree), ' elements and timestep: ', num2str(dt)])
+           pause(0.01)
         end
         
         plot([X; right],[analytic(X,T); analytic(X(1),T)],[X; right], [u1; u1(1)]);
-        legend('analytic','RK4',"Location","best");
+        legend('analytic','explicit euler',"Location","best");
         title(['T = ', num2str(T), ', with P', num2str(degree), ' elements and timestep: ', num2str(dt)])
     end
     

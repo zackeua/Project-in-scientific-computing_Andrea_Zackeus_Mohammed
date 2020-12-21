@@ -35,6 +35,6 @@ end
 %Determine the coefficients of the Lagrange interpolator
 %polynomial
 
-C=Y*L;
+C=Y.*L;
 
    

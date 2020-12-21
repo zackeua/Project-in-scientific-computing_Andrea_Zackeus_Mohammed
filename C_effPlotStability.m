@@ -1,14 +1,14 @@
 close all;
 
-a = 0.01;
+a = '2';
 degrees = 1:9;
 bounds = [0,1];
 n = 10;
-C_uni = fem(a,1,degrees,bounds,n);
+C_uni = fem2(a,1,degrees,bounds,n);
 
-C_gaussLobatto = fem(a,2,degrees,bounds,n);
+C_gaussLobatto = fem2(a,2,degrees,bounds,n);
 
-C_gaussLobattoExact = fem(a,3,degrees,bounds,n);
+C_gaussLobattoExact = fem2(a,3,degrees,bounds,n);
 
 
 figure

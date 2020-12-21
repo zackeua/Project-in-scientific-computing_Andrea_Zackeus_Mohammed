@@ -38,7 +38,7 @@ if mode==2
     X = (right-left)/2 * X +(right + left)/2;
     X = flip(X);
     W  = W*(right-left)/2;
-    phi = coeff2(degree,X);
+    [~,phi] = lagran(X,X);
 end
 
 if mode==3
@@ -48,7 +48,7 @@ if mode==3
     X = (right-left)/2 * X +(right + left)/2;
     X = flip(X);
     W  = W*(right-left)/2;
-    phi = coeff2(degree,X);
+    [~,phi] = lagran(X,X);
 end
 
 
