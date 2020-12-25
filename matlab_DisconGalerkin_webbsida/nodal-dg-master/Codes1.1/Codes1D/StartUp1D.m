@@ -17,7 +17,10 @@ LIFT = Lift1D();
 
 % build coordinates of all the nodes
 va = EToV(:,1)'; vb = EToV(:,2)';
-x = ones(N+1,1)*VX(va) + 0.5*(r+1)*(VX(vb)-VX(va));
+% EToV % EToV a matrix containg the nr of the nodes that a specific element has ie
+% x1 to x2 is the first rad (the first element)
+
+x = ones(N+1,1)*VX(va) + 0.5*(r+1)*(VX(vb)-VX(va)); % den global x vektorn for alla element
 
 % calculate geometric factors
 [rx,J] = GeometricFactors1D(x,Dr);

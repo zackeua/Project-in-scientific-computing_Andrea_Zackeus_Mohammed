@@ -9,10 +9,10 @@ df(:) = 0.5*a*(u(vmapM)-u(vmapP)).*(nx(:)-(1-alpha));
 % uin = -sin(a*time);  %%%%%%%%%%%%%%%%changed
 % i let BC =exact sol
 %% analytic solution
-u_0 = 1; % amplitude
-k = 2*pi; % wave frequency
-uin = real(u_0*exp(1i*k*(-time)));
-
+% u_0 = 1; % amplitude
+% k = 2*pi; % wave frequency
+% uin = real(u_0*exp(1i*k*(-time)));
+uin = u(end); %BC
 %
 df(mapI) = 0.5*a*(u(vmapI)-uin).*(nx(mapI)-(1-alpha));
 df(mapO) = 0;

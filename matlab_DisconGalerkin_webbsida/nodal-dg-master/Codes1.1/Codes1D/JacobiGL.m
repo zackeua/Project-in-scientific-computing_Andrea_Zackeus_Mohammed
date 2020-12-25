@@ -1,4 +1,4 @@
-function [x] = JacobiGL(alpha,beta,N);
+function [X] = JacobiGL(alpha,beta,N);
 
 % function [x] = JacobiGL(alpha,beta,N)
 % Purpose: Compute the N'th order Gauss Lobatto quadrature 
@@ -10,4 +10,8 @@ if (N==1) x(1)=-1.0; x(2)=1.0; return; end;
 
 [xint,w] = JacobiGQ(alpha+1,beta+1,N-2);
 x = [-1, xint', 1]';
+
+
+ X = linspace(0,1,Nv);
+    % X = X(1:end-1)';
 return;
