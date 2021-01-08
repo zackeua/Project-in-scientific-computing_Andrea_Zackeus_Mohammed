@@ -1,7 +1,7 @@
 clear;
 close all;
 clc;
-ps = 2*(1:4);
+ps = 2*(1:5);
 CFL = [];
 for degree = ps
     w = weights(degree,1);

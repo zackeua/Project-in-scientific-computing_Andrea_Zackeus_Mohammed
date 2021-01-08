@@ -14,9 +14,9 @@ n=intervals;
 
 C_eff = [];
 
-plotting = 1; % s??tt till 1 om du vill plotta
+plotting = 0; % s??tt till 1 om du vill plotta
 
-plot_eigenvalues = 1; % v??lj vad du vill plotta och skriva ut
+plot_eigenvalues = 0; % v??lj vad du vill plotta och skriva ut
 plot_C_eff = 0;
 disp_max_timesteps = 0;
 
@@ -74,12 +74,10 @@ for degree = degrees
     RK = M\(-a*K-L);
 
     ei = eig(RK);
+    eimax = max(abs(ei));
+    dtmax = 2.5/eimax;
     
-    dtmax = 1;
-    
-    while (max(abs(1+ei*dtmax)) > 1)
-        dtmax = dtmax/2;
-    end
+    % max(abs(1+ei*dtmax)) <= 1
     
     C_eff = [C_eff sqrt(3)*dtmax*m]; % calculate next C_eff number only
     

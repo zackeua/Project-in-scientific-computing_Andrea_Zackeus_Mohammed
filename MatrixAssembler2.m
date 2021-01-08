@@ -1,4 +1,4 @@
-function [M,L,K,X,local_L] = MatrixAssembler2(degree,n,mode,bounds)
+function [M,L,K,X] = MatrixAssembler2(degree,n,mode,bounds)
 % degree is degree of polynomials,
 % n is the number of intervals
 % mode is the type of matrix assembly
