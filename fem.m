@@ -74,8 +74,13 @@ for degree = degrees
     RK = -M\(a*K+L);
     
     %ei = eigs(RK,length(RK),'largestabs','Tolerance',10.^-3);
-    ei = eig(RK);
-    % ei = eig(a*K+L,-M);
+    
+    
+    %ei = eig(RK);
+    
+    ei = eig(1i*(a*K+L),-M);
+    
+    
     eimax = max(abs(ei));
     dtmax = sqrt(8)/eimax;
     
@@ -90,7 +95,7 @@ for degree = degrees
         contour(xi,yi,stabRK4,[1,1],'r')
         hold on;
         contour(xi,yi,stabRK1,[1,1])
-        plot(ei*dtmax,'*b');
+        plot(1i*ei*dtmax,'*b');
         title(['Eigenvalues for P', num2str(degree),' elements'])
         xlabel('Re(\lambda)')
         ylabel('Im(\lambda)')
@@ -100,6 +105,7 @@ for degree = degrees
         legend('RK4','explicit euler', '\lambda\cdot dt', 'Location','best')
         hold off;
     end
+    dtmax
     %% w/o masslumping timestepping
     if plotting == 1
         %pause;

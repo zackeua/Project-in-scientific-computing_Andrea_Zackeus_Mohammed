@@ -1,6 +1,6 @@
 close all;
 
-a = '1';
+a = 0.001;
 degrees = 1:10;
 bounds = [0,1];
 n = 10;
@@ -9,6 +9,10 @@ C_uni = fem2(a,1,degrees,bounds,n);
 C_gaussLobatto = fem2(a,2,degrees,bounds,n);
 
 C_gaussLobattoExact = fem2(a,3,degrees,bounds,n);
+
+C_gaussLobatto = C_gaussLobatto./C_uni(1);
+C_gaussLobattoExact = C_gaussLobattoExact./C_uni(1);
+C_uni = C_uni./C_uni(1);
 
 
 figure('Renderer', 'painters', 'Position', [10 10 900 600])

@@ -1,4 +1,4 @@
-function AdvecDriver1D(degrees,bounds,intervals, alpha)
+function [C_eff] = AdvecDriver1D(degrees,bounds,intervals, alpha)
 % degrees : the Order of polymomials used for approximation
 % bounds : the left and the right boundaries t ex [0 1]
 % intervals: the number of elements
@@ -40,5 +40,5 @@ a=1;
 % alpha = 0; % upwind flux
 % Solve Problem
 FinalTime = 10;
-[u] = Advec1D(u,FinalTime,a,alpha);
+[u, C_eff] = Advec1D(u,FinalTime,a,alpha);
 end
