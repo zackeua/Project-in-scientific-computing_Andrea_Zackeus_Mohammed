@@ -9,6 +9,7 @@ function [C_eff] = fem(a,choice,degrees,bounds,intervals)
 left = bounds(1); % boundaries
 right = bounds(2);
 
+
 %m = 60; % number of spatial points has to be dividable evenly by degree
 n=intervals;
 
@@ -71,6 +72,7 @@ for degree = degrees
     else
         a = a;
     end
+    K
     RK = -M\(a*K+L);
     
     %ei = eigs(RK,length(RK),'largestabs','Tolerance',10.^-3);
@@ -78,13 +80,13 @@ for degree = degrees
     
     %ei = eig(RK);
     
-    ei = eig(1i*(a*K+L),-M);
+    ei = eig((a*K+L),-M);
     
     
     eimax = max(abs(ei));
     dtmax = sqrt(8)/eimax;
     
-    C_eff = [C_eff sqrt(3)*dtmax*m]; % calculate next C_eff number only
+    C_eff = [C_eff dtmax*m]; % calculate next C_eff number only
     
     if disp_max_timesteps == 1
         disp(['Order ', num2str(degree), ' biggest possible timestep ', num2str(dtmax)])
@@ -92,18 +94,20 @@ for degree = degrees
     
     if plot_eigenvalues == 1
         figure;
-        contour(xi,yi,stabRK4,[1,1],'r')
+        contour(xi,yi,stabRK4,[1,1],'r','Linewidth',2)
         hold on;
-        contour(xi,yi,stabRK1,[1,1])
-        plot(1i*ei*dtmax,'*b');
+        %contour(xi,yi,stabRK1,[1,1])
+        plot(ei*dtmax,'*b');
         title(['Eigenvalues for P', num2str(degree),' elements'])
         xlabel('Re(\lambda)')
         ylabel('Im(\lambda)')
         ylim([-3 3]);
         xlim([-3 3]);
         %axis equal;
-        legend('RK4','explicit euler', '\lambda\cdot dt', 'Location','best')
+        legend('RK4', '\lambda\cdot dt', 'Location','best')
         hold off;
+        set(gca,'FontSize',15)
+        saveas(gcf,['eigs',num2str(a),'.png'])
     end
     dtmax
     %% w/o masslumping timestepping
@@ -113,7 +117,7 @@ for degree = degrees
         dt = dtmax*0.9;
         T = 0;
         figure;
-        while T < 1
+        while T < 10
            g1 = dt * RK * u1; %% minus ??r inlaggt i RK = -M\(L+a*K)
            g2 = dt * RK * (u1 + g1/2);
            g3 = dt * RK * (u1 + g2/2);
@@ -127,7 +131,7 @@ for degree = degrees
            pause(0.01)
         end
         
-        plot([X; right],[analytic(X,T); analytic(X(1),T)],[X; right], [u1; u1(1)]);
+        plot(linspace(0,1,100),analytic(linspace(0,1,100),T),[X; right], [u1; u1(1)]);
         legend('analytic','RK4');
         title(['T = ', num2str(T), ', with P', num2str(degree), ' elements and timestep: ', num2str(dt)])
         ylim([-1,1])
