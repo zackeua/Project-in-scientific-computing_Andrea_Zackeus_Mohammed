@@ -5,7 +5,7 @@ function [u,C_eff] = Advec1D(u, FinalTime, a, alpha)
 Globals1D;
 
 % CFL constant
-CFL= 1.24;
+CFL= 0.71;
 
 time = 0;
 % Runge-Kutta residual storage
@@ -17,7 +17,7 @@ dt = CFL*dxmin/a;
 
 C_eff = dt*(N+1)*10;
 dt
-return;
+%return;
 
 Nsteps = ceil(FinalTime/dt); dt = FinalTime/Nsteps;
 % outer time step loop
@@ -32,5 +32,7 @@ for tstep=1:Nsteps
 time = time+dt;
 % Plot solution
 plot(x,u); drawnow;%yticks(-1:0.2:1);
+x
+u
 end;
 return

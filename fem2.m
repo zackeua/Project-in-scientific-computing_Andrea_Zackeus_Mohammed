@@ -79,7 +79,7 @@ for degree = degrees
     
     % max(abs(1+ei*dtmax)) <= 1
     
-    C_eff = [C_eff sqrt(3)*dtmax*m]; % calculate next C_eff number only
+    C_eff = [C_eff dtmax*m]; % calculate next C_eff number only
     
     if disp_max_timesteps == 1
         disp(['Order ', num2str(degree), ' biggest possible timestep ', num2str(dtmax)])

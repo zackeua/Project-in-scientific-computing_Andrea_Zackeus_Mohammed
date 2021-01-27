@@ -33,8 +33,9 @@ end
 
 if mode==2
     [X,W]= legendre_gauss_lobatto(degree+1);
-    right = bounds(2)/(n+1);
-    left = bounds(1);
+    l = bounds(1):bounds(2)/n:bounds(2);
+    right = l(2); %bounds(2)/(n);
+    left = l(1); %bounds(1);
     X = (right-left)/2 * X +(right + left)/2;
     X = flip(X);
     W  = W*(right-left)/2;
@@ -43,8 +44,9 @@ end
 
 if mode==3
     [X,W]= legendre_gauss_lobatto(degree+1);
-    right = bounds(2)/(n+1);
-    left = bounds(1);
+    l = bounds(1):bounds(2)/n:bounds(2);
+    right = l(2); %bounds(2)/(n);
+    left = l(1); %bounds(1);
     X = (right-left)/2 * X +(right + left)/2;
     X = flip(X);
     W  = W*(right-left)/2;
